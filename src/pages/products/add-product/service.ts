@@ -1,7 +1,7 @@
 import request from 'umi-request';
 
 export async function fakeSubmitForm(params: any) {
-  return request('/products/create', {
+  return request('/product/create', {
     method: 'POST',
     data: params,
   });
@@ -9,7 +9,7 @@ export async function fakeSubmitForm(params: any) {
 
 export async function queryRule() {
   //console.log("params at queryRule");
-  let rqResult = request('/products/all');
+  let rqResult = request('/product/all');
   console.log("rqResult=============", rqResult);
   return rqResult;
 }

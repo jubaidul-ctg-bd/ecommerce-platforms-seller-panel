@@ -43,7 +43,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
 
       <div className={styles.container}>
         <div className={styles.lang}>
-          <SelectLang />
+          {/* <SelectLang /> */}
         </div>
         <div className={styles.content}>
           <div className={styles.top}>
@@ -53,7 +53,9 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
                 {/* <span className={styles.title}>Seller Panel</span> */}
               </Link>
             </div>
-            <div className={styles.desc}>Seller Panel</div>
+            <div className={styles.desc}>
+              {/* Seller Panel */}
+            </div>
           </div>
           {children}
         </div>

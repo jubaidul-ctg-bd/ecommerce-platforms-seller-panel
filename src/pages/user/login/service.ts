@@ -9,7 +9,7 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
-  const auth = await request('/sellers/auth/login', {
+  const auth = await request('/user/login', {
     method: 'POST',
     data: {
       username: params.userName,

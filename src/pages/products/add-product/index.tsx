@@ -88,25 +88,32 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const { submitting } = props;
   const [form] = Form.useForm();
+  const [value1, updateValue] = useState<string>(null);
+  const [value2, updateValue2] = useState<string>(null);
+  const [value3, updateValue3] = useState<string>(null);
+  const [name, updateName] = useState<string>(null);
 
   const [options, setOptions] = useState([])
   useEffect(() => {
-    getOptions();    
+    getOptions(); 
   },[])
+
+  form.setFieldsValue({
+    icon: value1,
+    image:value2,
+    banner: value3,
+  });   
+  console.log(value1, value2, value3);
+  
   
   const getOptions = async() => {
     let val = await categoryQuery();
     setOptions(val);
     console.log('val from getoptions:', val);
-    
   }
 
-  const [value, updateValue] = useState<string>(null);
-  const [value2, updateValue2] = useState<string>(null);
-  const [value3, updateValue3] = useState<string>(null);
-  const [name, updateName] = useState<string>(null);
   const update = {
-    value,
+    value1,
     value2,
     value3,
     name,
@@ -234,7 +241,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ]}
           >
           <Input
-            defaultValue={100}
             min={0}
             onChange={onChange}
             name="price"
@@ -254,7 +260,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ]}
           >
           <Input
-            defaultValue={1}
             min={0}
             onChange={onChange}
             name="quantity"
@@ -296,7 +301,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </FormItem>
           
 
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             name="icon"
             label="Icon"
@@ -310,20 +315,20 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             <Button icon={<PictureOutlined />} onClick={() => modelreq("icon")} >
               Selcet Image
             </Button>
-            {update.value ? (
-              <Input value={update.value}
+            {update.value1 ? (
+              <Input 
                 name="icon"
                 prefix={<Image
                 width={50}
-                src={update.value}
+                src={update.value1}
               />} disabled/>
             ) : null}
-          </FormItem>
+          </FormItem> */}
 
           <FormItem
             {...formItemLayout}
             name="image"
-            label="Image"
+            label="Images"
             // rules={[
             //   {
             //     required: true,
@@ -336,7 +341,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               Selcet Image
             </Button>
             {update.value2 ? (
-              <Input value={update.value2}
+              <Input 
                 name="image"
                 prefix={<Image
                 width={50}
@@ -346,7 +351,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </FormItem>
 
               
-          <FormItem
+          {/* <FormItem
             {...formItemLayout}
             name="banner"
             label="Banner"
@@ -355,12 +360,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               Selcet Image
             </Button>
             {update.value3 ? (
-              <Input value={update.value3} name="banner" prefix={<Image
+              <Input  
+                name="banner" 
+                prefix={<Image
                 width={50}
                 src={update.value3}
               />} disabled/>
             ) : null}
-          </FormItem>
+          </FormItem> */}
           <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
             <Button type="primary" htmlType="submit" loading={submitting}>
               <FormattedMessage id="formandbasic-form.form.submit" />

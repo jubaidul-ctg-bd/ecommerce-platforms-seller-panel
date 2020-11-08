@@ -166,7 +166,7 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
       </h3>
       <Form form={form} name="UserRegister" onFinish={onFinish}>
         <FormItem
-          name="shopname"
+          name="shopName"
           rules={[
             {
               required: true,

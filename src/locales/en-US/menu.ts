@@ -50,6 +50,7 @@ export default {
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
   'menu.register-result': 'Register Result',
+  'menu.register-login': 'Login Result',
 
   
   'menu.products': 'Products',

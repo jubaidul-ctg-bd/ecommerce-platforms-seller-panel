@@ -7,7 +7,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
 import { history } from 'umi';
 
 
@@ -64,6 +64,25 @@ const handleUpdate = async (fields: FormValueType) => {
  *  删除节点
  * @param selectedRows
  */
+
+const handleApproval = async (selectedRows: TableListItem[], status: string) => {
+  const hide = message.loading('Approving');
+
+  console.log("selectedRows", selectedRows);
+  
+  
+  if (!selectedRows) return true;
+  try {
+    await approvalRul(selectedRows, status);
+    hide();
+    message.success('Approved successfully, will refresh soon');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Approval failed, please try again');
+    return false;
+  }
+};
 
 
 const TableList: React.FC<{}> = () => {
@@ -122,20 +141,20 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        1: { text: 'Published', status: 'Success' },
-        0: { text: 'Unpublished', status: 'Error' },
+        Published: { text: 'Published', status: 'Success' },
+        Unpublished: { text: 'Unpublished', status: 'Error' },
       },
     },
-    {
-      title: 'Icon',
-      dataIndex: 'icon',
-      renderText: (val: string) => (
-        <Image
-          width={40}
-          src={val}
-        />
-      ),
-    },
+    // {
+    //   title: 'Icon',
+    //   dataIndex: 'icon',
+    //   renderText: (val: string) => (
+    //     <Image
+    //       width={40}
+    //       src={val}
+    //     />
+    //   ),
+    // },
     {
       title: 'Image',
       dataIndex: 'image',
@@ -146,16 +165,16 @@ const TableList: React.FC<{}> = () => {
         />
       ),
     },
-    {
-      title: 'Banner',
-      dataIndex: 'banner',
-      renderText: (val: string) => (
-        <Image
-          width={40}
-          src={val}
-        />
-      ),
-    },
+    // {
+    //   title: 'Banner',
+    //   dataIndex: 'banner',
+    //   renderText: (val: string) => (
+    //     <Image
+    //       width={40}
+    //       src={val}
+    //     />
+    //   ),
+    // },
     {
       title: 'Option',
       dataIndex: 'option',
@@ -164,7 +183,7 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              handleUpdateModalVisible(true);
+              // handleUpdateModalVisible(true);
               setStepFormValues(record);
             }}
           >
@@ -202,15 +221,19 @@ const TableList: React.FC<{}> = () => {
               overlay={
                 <Menu
                   onClick={async (e) => {
-                    if (e.key === 'publish') {
-                      await handleRemove(selectedRows);
+                    if (e.key === 'Publish') {
+                      await handleApproval(selectedRows, "Published");
+                      action.reload();
+                    }
+                    if (e.key === 'Unpublish') {
+                      await handleApproval(selectedRows, "Unpublished");
                       action.reload();
                     }
                   }}
                   selectedKeys={[]}
                 >
-                  <Menu.Item key="publish">publish</Menu.Item>
-                  <Menu.Item key="unpublish">Unpublish</Menu.Item>
+                  <Menu.Item key="Publish">Publish</Menu.Item>
+                  <Menu.Item key="Unpublish">Unpublish</Menu.Item>
                 </Menu>
               }
             >

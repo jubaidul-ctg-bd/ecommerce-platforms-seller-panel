@@ -5,6 +5,7 @@ import React from 'react';
 import { connect, ConnectProps, SelectLang } from 'umi';
 import { ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
+import Seller from './Seller';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
@@ -67,6 +68,8 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
         </a>
       </Tooltip>
       <NoticeIconView /> */}
+
+      {/* <Seller /> */}
       <Avatar menu />
       {REACT_APP_ENV && (
         <span>

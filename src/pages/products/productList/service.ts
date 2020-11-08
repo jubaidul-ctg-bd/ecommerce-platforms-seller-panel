@@ -1,9 +1,13 @@
+// import request from '../../../utils/request';
 import request from 'umi-request';
 import { TableListParams } from './data.d';
 // import {request} from 'src/app'
 
 export async function queryRule(params?: TableListParams) {     
-  let value = await request('/products/all', {
+  let value = await request('/product/all', {
+    // headers: {
+    //   'Authorization': localStorage.getItem('access_token') || '',
+    // },
     params,
   });
   console.log("value=========",value);
@@ -15,7 +19,7 @@ export async function queryRule(params?: TableListParams) {
 export async function removeRule(params: { id: string }) {
   console.log("params=======", params);
   
-  return request('/products/delete', {
+  return request('/product/delete', {
     method: 'POST',
     data: {
       ...params,
@@ -24,8 +28,18 @@ export async function removeRule(params: { id: string }) {
   });
 }
 
+export async function approvalRul(params: any, status: string) {  
+  return request('/product/update', {
+    method: 'POST',
+    data: {
+      ...params,
+      status,
+    },
+  });
+}
+
 export async function addRule(params: TableListParams) {
-  return request('/products/create/', {
+  return request('/product/create/', {
     method: 'POST',
     data: {
       ...params,

@@ -1,4 +1,4 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import React from 'react';
 import { history, ConnectProps, connect } from 'umi';
@@ -48,7 +48,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     } = this.props;
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {menu && (
+        {/* {menu && (
           <Menu.Item key="center">
             <UserOutlined />
             Personal center
@@ -59,7 +59,18 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
             <SettingOutlined />
             Personal settings
           </Menu.Item>
-        )}
+        )} */}
+
+        <Menu.Item key="shopProfile">
+        <ShopOutlined />
+          Shop Profile
+        </Menu.Item>
+
+        <Menu.Item key="userSettings">
+        <SettingOutlined />
+          User Settings 
+        </Menu.Item>
+
         {menu && <Menu.Divider />}
 
         <Menu.Item key="logout">
