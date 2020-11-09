@@ -97,7 +97,7 @@ function getBase64(file) {
     return (
       <PageHeaderWrapper>
         <Upload
-          action={proSettings.baseUrl+"/media/upload"}
+          action={proSettings.baseUrl+"/media/upload?dest="+localStorage.getItem('shopName')}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

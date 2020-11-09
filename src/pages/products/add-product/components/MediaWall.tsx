@@ -84,7 +84,7 @@ function getBase64(file) {
     return (
       <>
         <Upload
-          action="http://localhost:3000/cats/upload"
+          action={proSettings.baseUrl+"/media/upload?dest="+localStorage.getItem('shopName')}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

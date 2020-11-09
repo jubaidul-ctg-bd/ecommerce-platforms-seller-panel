@@ -23,6 +23,7 @@ export async function queryCurrent(): Promise<any> {
   console.log("value=============", sellerInfo);
   if(sellerInfo && sellerInfo.hasOwnProperty("shopName") && sellerInfo.shopName)
   {
+    localStorage.setItem('shopName', sellerInfo.shopName)
     sellerInfo.name = sellerInfo.shopName;
     sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
     return sellerInfo;
