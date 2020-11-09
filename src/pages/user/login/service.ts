@@ -14,6 +14,7 @@ export async function fakeAccountLogin(params: LoginParamsType) {
     data: {
       username: params.userName,
       password: params.password,
+      userAgent: 'seller', 
     },
   });
   console.log("auth======", auth);
@@ -24,12 +25,9 @@ export async function fakeAccountLogin(params: LoginParamsType) {
     return {
     status: 'ok',
     currentAuthority: 'admin',
-  };
+    };
   }
-  else return {
-    status: 'error',
-    currentAuthority: 'guest',
-  }
+  else return auth;
 }
 
 export async function getFakeCaptcha(mobile: string) {

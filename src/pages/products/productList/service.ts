@@ -4,7 +4,7 @@ import { TableListParams } from './data.d';
 // import {request} from 'src/app'
 
 export async function queryRule(params?: TableListParams) {     
-  let value = await request('/product/all', {
+  let value = await request('/product/allCurrentSeller', {
     // headers: {
     //   'Authorization': localStorage.getItem('access_token') || '',
     // },

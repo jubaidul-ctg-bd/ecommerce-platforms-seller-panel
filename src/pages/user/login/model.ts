@@ -76,7 +76,7 @@ const Model: ModelType = {
         history.replace(redirect || '/dashboard/monitor');
       }
       else {
-        message.error('email or password incorrect');
+        message.error(response);
         return;
       }
     },
