@@ -141,8 +141,8 @@ const TableList: React.FC<{}> = () => {
       dataIndex: 'status',
       hideInForm: true,
       valueEnum: {
-        Published: { text: 'Published', status: 'Success' },
-        Unpublished: { text: 'Unpublished', status: 'Error' },
+        published: { text: 'Published', status: 'Success' },
+        unpublished: { text: 'Unpublished', status: 'Error' },
       },
     },
     // {
@@ -222,11 +222,11 @@ const TableList: React.FC<{}> = () => {
                 <Menu
                   onClick={async (e) => {
                     if (e.key === 'Publish') {
-                      await handleApproval(selectedRows, "Published");
+                      await handleApproval(selectedRows, "published");
                       action.reload();
                     }
                     if (e.key === 'Unpublish') {
-                      await handleApproval(selectedRows, "Unpublished");
+                      await handleApproval(selectedRows, "unpublished");
                       action.reload();
                     }
                   }}

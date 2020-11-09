@@ -54,7 +54,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
               </Link>
             </div>
             <div className={styles.desc}>
-              {/* Seller Panel */}
+              Seller Panel
             </div>
           </div>
           {children}

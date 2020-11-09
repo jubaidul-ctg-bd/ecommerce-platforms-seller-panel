@@ -73,7 +73,7 @@ const Model: ModelType = {
             return;
           }
         }
-        history.replace(redirect || '/');
+        history.replace(redirect || '/dashboard/monitor');
       }
       else {
         message.error('email or password incorrect');

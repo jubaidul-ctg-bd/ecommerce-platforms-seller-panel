@@ -212,7 +212,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.category.label" />}
-            name="category"
+            name="categories"
             rules={[
               {
                 required: true,
@@ -221,7 +221,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ]}
           >
             <Cascader
-              fieldNames={{ label: 'title', value: 'title', children: 'children' }}
+              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
@@ -290,10 +290,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           >
             <div>
               <Radio.Group>
-                <Radio value="1">
+                <Radio value="published">
                   <FormattedMessage id="formandbasic-form.radio.publish" />
                 </Radio>
-                <Radio value="2">
+                <Radio value="unpublished">
                   <FormattedMessage id="formandbasic-form.radio.unpublish" />
                 </Radio>
               </Radio.Group>
