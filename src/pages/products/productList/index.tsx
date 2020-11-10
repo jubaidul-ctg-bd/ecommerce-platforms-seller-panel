@@ -9,6 +9,7 @@ import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule, approvalRul } from './service';
 import { history } from 'umi';
+import proSettings from '../../../../config/defaultSettings';
 
 
 /**
@@ -161,7 +162,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={val}
+          src={proSettings.baseUrl+"/media/image?url="+localStorage.getItem('shopName')+"/"+val}
         />
       ),
     },

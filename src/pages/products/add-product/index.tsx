@@ -15,6 +15,8 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
 import { categoryQuery } from './service';
+import proSettings from '../../../../config/defaultSettings';
+
 
 
 // const options = [
@@ -345,7 +347,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 name="image"
                 prefix={<Image
                 width={50}
-                src={update.value2}
+                src={proSettings.baseUrl+"/media/image?url="+localStorage.getItem('shopName')+"/"+update.value2}
               />} disabled/>
             ) : null}
           </FormItem>
