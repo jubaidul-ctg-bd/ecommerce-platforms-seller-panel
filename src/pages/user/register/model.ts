@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { Effect, Reducer } from 'umi';
 
 import { fakeRegister } from './service';
@@ -28,6 +29,9 @@ const Model: ModelType = {
   effects: {
     *submit({ payload }, { call, put }) {
       const response = yield call(fakeRegister, payload);
+      console.log("response", response);
+      
+      if(response.status!="ok") message.error(response);
       yield put({
         type: 'registerHandle',
         payload: response,
@@ -36,7 +40,7 @@ const Model: ModelType = {
   },
 
   reducers: {
-    registerHandle(state, { payload }) {
+    registerHandle(state, { payload }) {      
       return {
         ...state,
         status: payload.status,

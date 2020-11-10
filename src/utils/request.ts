@@ -16,6 +16,7 @@ const codeMessage = {
   403: 'The user is authorized, but access is forbidden.  ',
   404: 'The request sent was for a record that did not exist, and the server did not operate.  ',
   406: 'The requested format is not available.',
+  409: 'Duplicate key error.',
   410: 'The requested resource is permanently deleted and will no longer be available.  ',
   422: 'When creating an object, a validation error occurred.  ',
   500: 'An error occurred in the server, please check the server.  ',
@@ -28,6 +29,8 @@ const codeMessage = {
  * Exception handler
  */
 const errorHandler = (error: { response: Response }): Response => {
+  console.log("sdfasdfasdfasdfasdfad");
+  
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;

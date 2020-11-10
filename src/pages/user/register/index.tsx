@@ -55,7 +55,7 @@ export interface UserRegisterParams {
 const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) => {
   const [count, setcount]: [number, any] = useState(0);
   const [visible, setvisible]: [boolean, any] = useState(false);
-  const [prefix, setprefix]: [string, any] = useState('880');
+  const [prefix, setprefix]: [string, any] = useState('88');
   const [popover, setpopover]: [boolean, any] = useState(false);
   const confirmDirty = false;
   let interval: number | undefined;
@@ -65,6 +65,8 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
       return;
     }
     const account = form.getFieldValue('mail');
+    console.log("userAndregister", userAndregister);
+    
     if (userAndregister.status === 'ok') {
       message.success('Registration success!');
       history.push({
@@ -73,6 +75,9 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
           account,
         },
       });
+    }
+    else {
+      
     }
   }, [userAndregister]);
   useEffect(
@@ -324,12 +329,12 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
         </FormItem> */}
         <InputGroup compact>
           <Select size="large" value={prefix} onChange={changePrefix} style={{ width: '20%' }}>
-            <Option value="880">880</Option>
+            <Option value="88">88</Option>
             {/* <Option value="87">+87</Option> */}
           </Select>
           <FormItem
             style={{ width: '80%' }}
-            name="mobile"
+            name="cellNo"
             rules={[
               {
                 required: true,

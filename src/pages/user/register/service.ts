@@ -7,7 +7,8 @@ export async function fakeRegister(params: UserRegisterParams) {
     data: params,
   });
   
-  hell.status = 'ok'
-  console.log("hell================", hell);
+  if(hell.status=="pending") {
+    hell.status = 'ok'
+  }
   return hell;
 }
