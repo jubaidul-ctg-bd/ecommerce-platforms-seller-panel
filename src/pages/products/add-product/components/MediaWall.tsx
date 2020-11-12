@@ -70,6 +70,10 @@ function getBase64(file) {
     
   };
 
+  uploadMedia = (file) => {
+    return upload(file);
+ }
+
   handleChange = ({ fileList }) => this.getRules().then(result => this.setState({
     fileList: result
   }))
@@ -85,7 +89,7 @@ function getBase64(file) {
     return (
       <>
         <Upload
-          action={proSettings.baseUrl+"/media/upload?dest="+localStorage.getItem('shopName')}
+          action={this.uploadMedia}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

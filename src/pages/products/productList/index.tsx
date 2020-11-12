@@ -115,10 +115,10 @@ const TableList: React.FC<{}> = () => {
       title: 'Title',
       dataIndex: 'title',
     },
-    // {
-    //   title: 'Category',
-    //   dataIndex: 'category',
-    // },
+    {
+      title: 'Category',
+      dataIndex: 'categoryTitle',
+    },
     {
       title: 'Description',
       dataIndex: 'desc',
@@ -162,7 +162,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={proSettings.baseUrl+"/media/image?url="+localStorage.getItem('shopName')+"/"+val}
+          src={proSettings.baseUrl+"/media/image/"+val}
         />
       ),
     },

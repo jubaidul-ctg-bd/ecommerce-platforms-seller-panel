@@ -2,10 +2,11 @@
 import { Upload, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { queryRule, removeRule } from './service';
+import { queryRule, removeRule, upload } from './service';
 import { TableListParams } from './data';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import  proSettings  from '../../../../config/defaultSettings';
+import { RcFile } from 'antd/lib/upload';
 
 
 function getBase64(file) {
@@ -17,7 +18,11 @@ function getBase64(file) {
   });
 }
 
-
+function handleUpload(file) {
+  return new Promise((resolve, reject) => {
+    
+  });
+}
 
  class PicturesWall extends React.Component {
   // image = request('http://localhost:3000/cats');
@@ -68,6 +73,10 @@ function getBase64(file) {
     });
   };
 
+  uploadMedia = (file) => {
+    return upload(file);
+ }
+
   handleRemove = async (file: TableListParams) => {
     
     console.log('query rule', file);
@@ -81,6 +90,8 @@ function getBase64(file) {
     }
     
   };
+
+
 
   handleChange = ({ fileList }) => this.getRules().then(result => this.setState({
     fileList: result
@@ -97,7 +108,7 @@ function getBase64(file) {
     return (
       <PageHeaderWrapper>
         <Upload
-          action={proSettings.baseUrl+"/media/upload?dest="+localStorage.getItem('shopName')}
+          action={this.uploadMedia}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

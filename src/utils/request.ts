@@ -49,31 +49,9 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-
-
-/**
- * Configure the default parameters for request
- */
-// let baseUrl = ;
-
-// localStorage.getItem('access_token') || ''
-
-console.log("extend==============", extend);
-
-
 const request = extend({
   errorHandler, // Default error handling
   credentials: 'include', // Does the default request bring cookies
-  // mode: 'cors',
-  // headers: {
-  //   'Authorization': localStorage.getItem('access_token') || '',
-  //   'Accept': '*/*',
-  //   'Accept-Encoding': 'gzip, deflate',
-  //   'Accept-Language': 'en-US,en;q=0.9,bn-BD;q=0.8,bn;q=0.7',
-  //   'Connection': 'keep-alive',
-  //   "Content-Type": "application/json,text/plain, */*; charset=utf-8",
-  // },
-  
 });
 
 let baseUrl = defaultSettings.devBaseUrl;
@@ -84,7 +62,7 @@ if (process.env.NODE_ENV == "production"){
 
 request.interceptors.request.use((url, options) => {
   const headers = {
-    'Authorization': localStorage.getItem('access_token') || '',
+    'Authorization': 'Bearer '+localStorage.getItem('access_token'),
   }
   return {
     url: baseUrl+ `${url}`,

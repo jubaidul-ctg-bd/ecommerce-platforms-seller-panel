@@ -347,7 +347,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 name="image"
                 prefix={<Image
                 width={50}
-                src={proSettings.baseUrl+"/media/image?url="+localStorage.getItem('shopName')+"/"+update.value2}
+                src={proSettings.baseUrl+"/media/image/"+update.value2}
               />} disabled/>
             ) : null}
           </FormItem>

@@ -68,6 +68,7 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
     console.log("userAndregister", userAndregister);
     
     if (userAndregister.status === 'ok') {
+      delete userAndregister.status;
       message.success('Registration success!');
       history.push({
         pathname: '/user/register-result',
