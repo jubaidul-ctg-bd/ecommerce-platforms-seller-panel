@@ -76,11 +76,11 @@ const handleApproval = async (selectedRows: TableListItem[], status: string) => 
   try {
     await approvalRul(selectedRows, status);
     hide();
-    message.success('Approved successfully, will refresh soon');
+    message.success(status+' successfully, will refresh soon');
     return true;
   } catch (error) {
     hide();
-    message.error('Approval failed, please try again');
+    message.error(status+' failed, please try again');
     return false;
   }
 };

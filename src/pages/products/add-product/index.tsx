@@ -90,10 +90,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const { submitting } = props;
   const [form] = Form.useForm();
-  const [value1, updateValue] = useState<string>(null);
-  const [value2, updateValue2] = useState<string>(null);
-  const [value3, updateValue3] = useState<string>(null);
-  const [name, updateName] = useState<string>(null);
+  const [value1, updateValue] = useState<string>('');
+  const [value2, updateValue2] = useState<string>('');
+  const [value3, updateValue3] = useState<string>('');
+  const [name, updateName] = useState<string>('');
 
   const [options, setOptions] = useState([])
   useEffect(() => {
@@ -154,6 +154,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       type: 'categoryAdd/submitRegularForm',
       payload: values,
     });
+    form.resetFields();
+    updateValue1('');
+    updateValue2('');
+    updateValue3('');
   };
 
   const onFinishFailed = (errorInfo: any) => {
