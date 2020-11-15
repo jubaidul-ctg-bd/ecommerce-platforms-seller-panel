@@ -2,9 +2,8 @@
 import { Upload, Modal, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { queryRule, removeRule } from '../../../media/manage-media/service';
+import { queryRule, removeRule, upload } from '../../../media/manage-media/service';
 import { TableListParams } from '../data';
-import  proSettings  from '../../../../../config/defaultSettings';
 
 
 function getBase64(file) {

@@ -121,7 +121,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: 'Description',
-      dataIndex: 'desc',
+      dataIndex: 'description',
       valueType: 'textarea',
     },
     {

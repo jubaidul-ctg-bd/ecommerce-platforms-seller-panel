@@ -90,7 +90,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const { submitting } = props;
   const [form] = Form.useForm();
-  const [value1, updateValue] = useState<string>('');
+  const [value1, updateValue1] = useState<string>('');
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
@@ -180,7 +180,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const getUrl = (e) => {
     handleModalVisible(e.modelSate);
     updateName(e.name);
-    if(e.name=="icon") updateValue(e.url);
+    if(e.name=="icon") updateValue1(e.url);
     else if(e.name=="image")updateValue2(e.url);
     else if(e.name=="banner")updateValue3(e.url);
     
