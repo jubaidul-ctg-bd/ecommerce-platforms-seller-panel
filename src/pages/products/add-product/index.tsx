@@ -8,14 +8,16 @@ import {
   Modal,
   Image,
 } from 'antd';
-import {  PictureOutlined } from '@ant-design/icons';
+import {  MinusCircleOutlined, PictureOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
-import { categoryQuery } from './service';
+import { categoryQuery, getTermValue } from './service';
 import proSettings from '../../../../config/defaultSettings';
+import { element } from 'prop-types';
+
 
 
 
@@ -68,6 +70,7 @@ function onChange(value) {
   //console.log(value);
 }
 
+
 function onChangeSelect(value) {
   //console.log(`selected ${value}`);
 }
@@ -86,6 +89,15 @@ interface BasicFormProps {
   dispatch: Dispatch;
 }
 
+
+export interface FormListFieldData {
+  name: string;
+  key: number;
+  fieldKey: number;
+  title: string;
+  id: number;
+}
+
 const BasicForm: FC<BasicFormProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const { submitting } = props;
@@ -94,16 +106,20 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
-
   const [options, setOptions] = useState([])
+  const [productTermValue, setProductTermValue] = useState([])
+
+
+
   useEffect(() => {
-    getOptions(); 
+    getOptions();     
   },[])
 
-  form.setFieldsValue({
+  form.setFieldsValue ({
     icon: value1,
     image:value2,
     banner: value3,
+    productAttributes: productTermValue,
   });   
   console.log(value1, value2, value3);
   
@@ -183,9 +199,21 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if(e.name=="icon") updateValue1(e.url);
     else if(e.name=="image")updateValue2(e.url);
     else if(e.name=="banner")updateValue3(e.url);
-    
   }
 
+  const onChangeCascader = async(value) => {
+    let val = await getTermValue({id: value[value.length - 1]})
+    console.log("val====================",val)
+    setProductTermValue(val)
+  }
+
+  const formItemLayoutWithOutLabel = {
+    wrapperCol: {
+      xs: { span: 24, offset: 0 },
+      sm: { span: 20, offset: 4 },
+      md: { span: 10, offset: 7 },
+    },
+  };
 
   return (
     <PageHeaderWrapper 
@@ -197,11 +225,11 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           style={{ marginTop: 8 }}
           form={form}
           name="basic"
-          initialValues={{ public: '1' }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
         >
+
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.title.label" />}
@@ -227,14 +255,91 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ]}
           >
             <Cascader
-              fieldNames={{ label: 'title', value: '_id', children: 'children' }}
+              fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
               options={options}
               expandTrigger="hover"
               displayRender={displayRender}
-              onChange={onChange}
+              onChange={onChangeCascader}
               changeOnSelect={true}              
             />
-          </FormItem>      
+          </FormItem>     
+
+          {productTermValue.map( (element, index) => (
+            <FormItem
+              {...formItemLayout}
+              label={element.title}
+              name={'productAttributes[${index}]'}
+              rules={[
+                {
+                  required: true,
+                  message: formatMessage({ id: 'formandbasic-form.title.required' }),
+                },
+              ]}
+            >
+              <Input placeholder={element.title} />
+            </FormItem>
+
+          ))}
+
+
+            {/* {productTermValue.map((datamapped, index)=> 
+
+              <div key={datamapped.id}>
+
+                <Form.Item>
+
+                {getFieldDecorator(`price[${index}].basePrice`)(
+                  <Input placeholder="Base Price"/>,
+                )}
+
+                {getFieldDecorator(`price[${index}].higherPrice`)(
+                  <Input placeholder="Higher Price"/>,
+                )}
+                </Form.Item>
+              </div>
+            )} */}
+
+
+
+        {/* <Form.List
+          name = "productAttributes"
+        >
+          { (productTermValue) => (
+            <>
+            {console.log("productTermValue=========", productTermValue)}
+              {productTermValue.map((field, index) => (
+                <>
+                  
+                  <FormItem
+                    {...(formItemLayout)}
+                    // label={field.title}
+                    required={false}
+                    key={field.key}
+                  >
+                    <FormItem
+                      {...field}
+                      validateTrigger={['onChange', 'onBlur']}
+                      rules={[
+                        {
+                          required: true,
+                          whitespace: true,
+                          message: "Please input option's or delete this field.",
+                        },
+                      ]}
+                      noStyle
+                    >
+                      <Input placeholder="option" style={{ width: '60%' }}/>
+                    </FormItem>
+                  </FormItem>
+                  </>
+                ))}
+            </>
+          )}
+        </Form.List> */}
+
+
+
+
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.price.label" />}
@@ -410,3 +515,4 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
   submitting: loading.effects['categoryAdd/submitRegularForm'],
 }))(BasicForm);
+

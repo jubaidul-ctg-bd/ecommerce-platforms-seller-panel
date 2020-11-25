@@ -10,7 +10,7 @@ type DefaultSettings = ProSettings & {
 
 
 const func = () => {
-  const devUrl ='http://192.168.0.107:3000';
+  const devUrl ='http://192.168.0.13:3000';
   const liveUrl = 'http://api.ebhubon.com';
 
   let temp = devUrl;
@@ -36,7 +36,7 @@ const proSettings: DefaultSettings = {
   title: 'Seller Panel',
   pwa: false,
   iconfontUrl: '',
-  devBaseUrl:'http://192.168.0.107:3000',
+  devBaseUrl:'http://192.168.0.13:3000',
   liveBaseUrl:'http://api.ebhubon.com',
   baseUrl: func(),
   authToken: '',
@@ -45,3 +45,4 @@ const proSettings: DefaultSettings = {
 export type { DefaultSettings };
 
 export default proSettings;
+

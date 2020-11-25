@@ -15,14 +15,13 @@ export async function queryRule() {
 }
 
 export async function categoryQuery() {
-  let rqResult = request('/category/allchild');
-  console.log("rqResult=============", rqResult);
+  let rqResult = request('/term/allchild');
   return rqResult;
 }
 
 export async function removeRule(params: { name: string[] }) {
   //console.log("params at removeRule", params);
-  return request('http://localhost:3000/cats/deleteImage', {
+  return request('/product/deleteImage', {
     method: 'POST',
     data: {
       ...params,
@@ -30,5 +29,18 @@ export async function removeRule(params: { name: string[] }) {
     },
   });
 }
+
+
+export async function getTermValue(params: { id: string }) {
+  //console.log("params at removeRule", params);
+  let value = request('/product/getTermValue', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });  
+  return value;
+}
+
 
 
