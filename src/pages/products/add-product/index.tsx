@@ -17,6 +17,8 @@ import MediaWall from './components/MediaWall';
 import { categoryQuery, getTermValue } from './service';
 import proSettings from '../../../../config/defaultSettings';
 import { element } from 'prop-types';
+import { fromPairs } from 'lodash';
+import FieldSetArray from './components/FieldSetArray';
 
 
 
@@ -108,7 +110,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [name, updateName] = useState<string>('');
   const [options, setOptions] = useState([])
   const [productTermValue, setProductTermValue] = useState([])
-
+  const [PTValue, setPTValue] = useState([])
 
 
   useEffect(() => {
@@ -165,6 +167,11 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   // };
 
   const onFinish = (values: { [key: string]: any }) => {
+
+    console.log("sdfsdfsdfdsf====productTermValue",productTermValue)
+
+    console.log("onFinish==========", values);
+    
     const { dispatch } = props;
     dispatch({
       type: 'categoryAdd/submitRegularForm',
@@ -176,6 +183,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     updateValue3('');
   };
 
+  const onFinishProAttr = (values: { [key: string]: any }) => {
+      console.log("onFinishProAttr========", values);
+  }
+
   const onFinishFailed = (errorInfo: any) => {
     // eslint-disable-next-line no-console
     console.log('Failed:', errorInfo);
@@ -183,7 +194,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   const onValuesChange = (changedValues: { [key: string]: any }) => {
     const { publicType } = changedValues;
-    console.log('form values: ', publicType);
     
     if (publicType) setShowPublicUsers(publicType === '2');
   };
@@ -203,7 +213,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   const onChangeCascader = async(value) => {
     let val = await getTermValue({id: value[value.length - 1]})
+  //   let val = [
+  //     {'id':10,'title':'brandddd','termValue':'cats eye'},
+  //     {'id':10,'title':'colorrrr','termValue':'red'},
+  // ]
     console.log("val====================",val)
+   
     setProductTermValue(val)
   }
 
@@ -233,7 +248,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.title.label" />}
-            name="title"
+            name='title'
             rules={[
               {
                 required: true,
@@ -264,11 +279,13 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             />
           </FormItem>     
 
-          {productTermValue.map( (element, index) => (
+     
+          {/* {productTermValue.map( (element, index) => (
             <FormItem
               {...formItemLayout}
               label={element.title}
-              name={'productAttributes[${index}]'}
+              key={index}
+              name={['productAttributes',element.title]}
               rules={[
                 {
                   required: true,
@@ -278,58 +295,51 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             >
               <Input placeholder={element.title} />
             </FormItem>
+          ))} */}
+       <FormItem
+          name = "productAttributes"
+        >
 
-          ))}
+          <FieldSetArray values={productTermValue}/>
+        </FormItem>
+        
 
-
-            {/* {productTermValue.map((datamapped, index)=> 
-
-              <div key={datamapped.id}>
-
-                <Form.Item>
-
-                {getFieldDecorator(`price[${index}].basePrice`)(
-                  <Input placeholder="Base Price"/>,
-                )}
-
-                {getFieldDecorator(`price[${index}].higherPrice`)(
-                  <Input placeholder="Higher Price"/>,
-                )}
-                </Form.Item>
-              </div>
-            )} */}
-
+{/* {console.log("FormArray===========", PTValue)} */}
+          {/* {productTermValue.map( (element, index) => (
+              <FormItem
+                {...formItemLayout}
+                label={element.title}
+                key={element.title}
+                name={["productAttributes", element.title]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: formatMessage({ id: 'formandbasic-form.title.required' }),
+                //   },
+                // ]}
+              >
+                <Input placeholder={element.title} />
+              </FormItem>
+            ))} */}
+        {/* </FormItem> */}
 
 
         {/* <Form.List
           name = "productAttributes"
         >
-          { (productTermValue) => (
+          { (fields) => (
             <>
-            {console.log("productTermValue=========", productTermValue)}
-              {productTermValue.map((field, index) => (
+              {fields.map((field, index) => (
+                console.log("fieldfieldfieldfield", field),
                 <>
-                  
                   <FormItem
                     {...(formItemLayout)}
-                    // label={field.title}
+                    label={productTermValue[field.key].title}
                     required={false}
                     key={field.key}
-                  >
-                    <FormItem
-                      {...field}
-                      validateTrigger={['onChange', 'onBlur']}
-                      rules={[
-                        {
-                          required: true,
-                          whitespace: true,
-                          message: "Please input option's or delete this field.",
-                        },
-                      ]}
-                      noStyle
-                    >
+                    name={[field.name, productTermValue[field.key].title]}
+                  >                    
                       <Input placeholder="option" style={{ width: '60%' }}/>
-                    </FormItem>
                   </FormItem>
                   </>
                 ))}
