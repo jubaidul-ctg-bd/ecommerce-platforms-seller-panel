@@ -98,7 +98,7 @@ const TableList: React.FC<{}> = () => {
     if (!e) return true;
     try {
       await removeRule({
-        id: e._id,
+        id: e.id,
       });
       actionRef.current.reload();
       hide();
@@ -117,7 +117,7 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: 'Category',
-      dataIndex: 'categoryTitle',
+      dataIndex: ['category', 'title'],
     },
     {
       title: 'Description',
@@ -184,8 +184,11 @@ const TableList: React.FC<{}> = () => {
         <>
           <a
             onClick={() => {
-              // handleUpdateModalVisible(true);
-              setStepFormValues(record);
+              history.push({
+                pathname: '/products/add-product',
+                state: record,
+              });
+              // setStepFormValues(record);
             }}
           >
             Edit

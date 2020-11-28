@@ -9,13 +9,14 @@ import {
   Image,
 } from 'antd';
 import {  MinusCircleOutlined, PictureOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
+import { connect, Dispatch, FormattedMessage, formatMessage, useLocation } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
 import { categoryQuery, getTermValue } from './service';
 import proSettings from '../../../../config/defaultSettings';
+import { history } from 'umi';
 import { element } from 'prop-types';
 import { fromPairs } from 'lodash';
 import FieldSetArray from './components/FieldSetArray';
@@ -109,9 +110,28 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
   const [options, setOptions] = useState([])
-  const [productTermValue, setProductTermValue] = useState([])
-  const [PTValue, setPTValue] = useState([])
+  const [selectedItems, setSelectedItems] = useState([])
+  const location = useLocation<object>()
 
+  if(location.state==undefined) location.state = []
+  const [productTermValues, setProductTermValue] = useState([])
+
+
+
+  // const [formVals, setFormVals] = useState<FormValueType>({
+  //   title: location.state.title,
+  //   categories: location.state.categories,
+  //   order: location.state.order,
+  //   description: location.state.description,
+  //   name: location.state.name,
+  //   images: location.state.images,
+  //   slug: location.state.slug,
+  //   price: location.state.price,
+  //   productAttributes: location.state.productTermValues,
+  //   quantity: location.state.quantity,
+  // })
+
+  
 
   useEffect(() => {
     getOptions();     
@@ -119,17 +139,26 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   form.setFieldsValue ({
     icon: value1,
-    image:value2,
+    images:value2,
     banner: value3,
-    productAttributes: productTermValue,
+    productAttributes: productTermValues,
   });   
-  console.log(value1, value2, value3);
   
   
   const getOptions = async() => {
     let val = await categoryQuery();
+    let values = []
     setOptions(val);
-    console.log('val from getoptions:', val);
+    if(location.state.productTermValues==undefined) location.state.productTermValues = []
+    else {
+      console.log("val====================",location.state.productTermValues)
+      let val = await getTermValue({id: location.state.category.id})
+      val.map((element, index) => {
+        element.productTermValue = location.state.productTermValues[index].termValue
+      })
+      setProductTermValue(val);
+    }
+    
   }
 
   const update = {
@@ -167,17 +196,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   // };
 
   const onFinish = (values: { [key: string]: any }) => {
-
-    console.log("sdfsdfsdfdsf====productTermValue",productTermValue)
-
-    console.log("onFinish==========", values);
     
     const { dispatch } = props;
     dispatch({
       type: 'categoryAdd/submitRegularForm',
       payload: values,
     });
-    form.resetFields();
+    form.resetFields()
+    setProductTermValue([])
     updateValue1('');
     updateValue2('');
     updateValue3('');
@@ -207,16 +233,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     handleModalVisible(e.modelSate);
     updateName(e.name);
     if(e.name=="icon") updateValue1(e.url);
-    else if(e.name=="image")updateValue2(e.url);
+    else if(e.name=="images")updateValue2(e.url);
     else if(e.name=="banner")updateValue3(e.url);
   }
 
   const onChangeCascader = async(value) => {
     let val = await getTermValue({id: value[value.length - 1]})
-  //   let val = [
-  //     {'id':10,'title':'brandddd','termValue':'cats eye'},
-  //     {'id':10,'title':'colorrrr','termValue':'red'},
-  // ]
     console.log("val====================",val)
    
     setProductTermValue(val)
@@ -229,6 +251,15 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       md: { span: 10, offset: 7 },
     },
   };
+
+  const handleChange = (selectedItems, value) => {
+    console.log("handleChange=======", value, selectedItems);
+    setSelectedItems(selectedItems)
+    value.productTermValue = selectedItems
+  };
+
+
+
 
   return (
     <PageHeaderWrapper 
@@ -243,6 +274,19 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           onValuesChange={onValuesChange}
+          initialValues={{
+            title: location.state.title,
+            categories: location.state.categories,
+            order: location.state.order,
+            description: location.state.description,
+            name: location.state.name,
+            images: location.state.images,
+            slug: location.state.slug,
+            price: location.state.price,
+            productAttributes: location.state.productTermValues,
+            quantity: location.state.quantity,
+            // status: location.state.status,
+         }}
         >
 
           <FormItem
@@ -277,78 +321,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               onChange={onChangeCascader}
               changeOnSelect={true}              
             />
-          </FormItem>     
-
-     
-          {/* {productTermValue.map( (element, index) => (
-            <FormItem
-              {...formItemLayout}
-              label={element.title}
-              key={index}
-              name={['productAttributes',element.title]}
-              rules={[
-                {
-                  required: true,
-                  message: formatMessage({ id: 'formandbasic-form.title.required' }),
-                },
-              ]}
-            >
-              <Input placeholder={element.title} />
-            </FormItem>
-          ))} */}
-       <FormItem
-          name = "productAttributes"
-        >
-
-          <FieldSetArray values={productTermValue}/>
-        </FormItem>
-        
-
-{/* {console.log("FormArray===========", PTValue)} */}
-          {/* {productTermValue.map( (element, index) => (
-              <FormItem
-                {...formItemLayout}
-                label={element.title}
-                key={element.title}
-                name={["productAttributes", element.title]}
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: formatMessage({ id: 'formandbasic-form.title.required' }),
-                //   },
-                // ]}
-              >
-                <Input placeholder={element.title} />
-              </FormItem>
-            ))} */}
-        {/* </FormItem> */}
-
-
-        {/* <Form.List
-          name = "productAttributes"
-        >
-          { (fields) => (
-            <>
-              {fields.map((field, index) => (
-                console.log("fieldfieldfieldfield", field),
-                <>
-                  <FormItem
-                    {...(formItemLayout)}
-                    label={productTermValue[field.key].title}
-                    required={false}
-                    key={field.key}
-                    name={[field.name, productTermValue[field.key].title]}
-                  >                    
-                      <Input placeholder="option" style={{ width: '60%' }}/>
-                  </FormItem>
-                  </>
-                ))}
-            </>
-          )}
-        </Form.List> */}
-
-
-
+          </FormItem>    
 
           <FormItem
             {...formItemLayout}
@@ -420,35 +393,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               </Radio.Group>
             </div>
           </FormItem>
-          
-
-          {/* <FormItem
-            {...formItemLayout}
-            name="icon"
-            label="Icon"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: formatMessage({ id: 'formandbasic-form.title.required' }),
-            //   },
-            // ]}
-          >            
-            <Button icon={<PictureOutlined />} onClick={() => modelreq("icon")} >
-              Selcet Image
-            </Button>
-            {update.value1 ? (
-              <Input 
-                name="icon"
-                prefix={<Image
-                width={50}
-                src={update.value1}
-              />} disabled/>
-            ) : null}
-          </FormItem> */}
 
           <FormItem
             {...formItemLayout}
-            name="image"
+            name="images"
             label="Images"
             // rules={[
             //   {
@@ -458,12 +406,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             // ]}
             
           >            
-            <Button icon={<PictureOutlined />} onClick={() => modelreq("image")} >
+            <Button icon={<PictureOutlined />} onClick={() => modelreq("images")} >
               Selcet Image
             </Button>
             {update.value2 ? (
               <Input 
-                name="image"
+                name="images"
                 prefix={<Image
                 width={50}
                 src={proSettings.baseUrl+"/media/image/"+update.value2}
@@ -471,25 +419,64 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ) : null}
           </FormItem>
 
-              
-          {/* <FormItem
-            {...formItemLayout}
-            name="banner"
-            label="Banner"
-          >            
-            <Button icon={<PictureOutlined />} onClick={() => modelreq("banner")}>
-              Selcet Image
-            </Button>
-            {update.value3 ? (
-              <Input  
-                name="banner" 
-                prefix={<Image
-                width={50}
-                src={update.value3}
-              />} disabled/>
-            ) : null}
-          </FormItem> */}
-          <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+          <FormItem
+            name = "productAttributes"
+            style = {{margin: 0, minHeight: 0}}
+          >
+             {productTermValues.map( (value, index) => (
+                <FormItem
+                  {...formItemLayout}
+                  label={value.title}
+                >
+                  {value.type == 'text' ? (
+                    <Input placeholder={value.title} onBlur={(e) => value.productTermValue=e.target.value} defaultValue={value.productTermValue}/>
+                  ): null}
+                  
+                  {value.type == 'single-choice' ? (
+                    console.log("value.type", value.type),
+                    
+                    <Select
+                      showSearch
+                      placeholder="Select an option"
+                      optionFilterProp="children"
+                      onChange={(e) => value.productTermValue=e}
+                      // onFocus={onFocus}
+                      // onBlur={onBlur}
+                      onSearch={onSearch}
+                      defaultValue={value.productTermValue}
+                      // options={value.termValues}
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {value.termValues.map( (element, index) => (
+                        <Option value={element.title}>{element.title}</Option>
+                      ))}
+                    </Select>
+                  ): null}
+                  
+                  {value.type == 'multiple-choice' ? (
+                    // value.termValues.filter(o => !selectedItems.includes(o)),
+                    <Select
+                      mode="multiple"
+                      placeholder="Inserted are removed"
+                      value={value.productTermValue}
+                      onChange={(e) => handleChange(e, value)}
+                      style={{ width: '100%' }}
+                    >
+                      {value.termValues.map(item => (
+                        console.log("termValues=========", item),
+                        <Select.Option key={item.title} value={item.title}>
+                          {item.title}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  ): null}
+                </FormItem>
+              ))}
+          </FormItem>
+
+          <FormItem {...submitFormLayout} style={{ marginTop: 0 }}>
             <Button type="primary" htmlType="submit" loading={submitting}>
               <FormattedMessage id="formandbasic-form.form.submit" />
             </Button>

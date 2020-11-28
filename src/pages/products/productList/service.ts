@@ -16,14 +16,13 @@ export async function queryRule(params?: TableListParams) {
 }
 
 
-export async function removeRule(params: { id: string }) {
+export async function removeRule(params: { id: number }) {
   console.log("params=======", params);
   
   return request('/product/delete', {
     method: 'POST',
     data: {
       ...params,
-      method: 'delete',
     },
   });
 }
