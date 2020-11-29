@@ -152,6 +152,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     let val = await categoryQuery();
     let values = []
     setOptions(val);
+    
     if(location.state.productTermValues==undefined) location.state.productTermValues = []
     else {
       console.log("val====================",location.state.productTermValues)
@@ -160,6 +161,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
         element.productTermValue = location.state.productTermValues[index].termValue
       })
       setProductTermValue(val);
+      getSlug(location.state.slug)
     }
     
   }

@@ -70,7 +70,9 @@ const Login: React.FC<LoginProps> = (props) => {
       // console.log('vvvvvvvvvvvvvvvvvvvvvvvv', res);
       setCurrentUser(res.userId)
       currentStatus = res.status;
-      if(res.status!='invalidOtpCode')setCurrStatus(res.status)
+      
+      if(res.status=='invalidOtpCode' ||  res.status=='invalidOtp') message.error('Invalid OTP Code');
+      else setCurrStatus(res.status) 
 
       // console.log('stateeeeeeeee', currentStatus);
       ////////Phone Start////////////
@@ -112,6 +114,8 @@ const Login: React.FC<LoginProps> = (props) => {
         // }
         // history.replace(redirect || '/');
         history.replace('/dashboard/monitor');
+      } else {
+        
       }
       
       // console.log('status===', status);
@@ -322,6 +326,7 @@ const Login: React.FC<LoginProps> = (props) => {
         </div> */}
         <Submit
           loading={submitting}
+          style={{marginTop: 0}}
         >Login/Signup</Submit>
         {/* <div className={styles.other}>
           Other login methods
