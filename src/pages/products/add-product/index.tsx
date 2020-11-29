@@ -201,6 +201,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   // };
 
   const onFinish = (values: { [key: string]: any }) => {
+    if(location.state!=undefined && location.state.id!=undefined) values.id = location.state.id
     
     const { dispatch } = props;
     dispatch({
