@@ -10,9 +10,21 @@ export async function fakeSubmitForm(params: any) {
 export async function queryRule() {
   //console.log("params at queryRule");
   let rqResult = request('/product/all');
-  console.log("rqResult=============", rqResult);
   return rqResult;
 }
+
+export async function querySlug(params: { slug: string }) {
+  console.log("params", params.slug);
+  
+  return request('/product/getSlug', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+
 
 export async function categoryQuery() {
   let rqResult = request('/term/allchild');

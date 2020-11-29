@@ -7,6 +7,7 @@ import {
   Input,
   Modal,
   Image,
+  Divider,
 } from 'antd';
 import {  MinusCircleOutlined, PictureOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect, Dispatch, FormattedMessage, formatMessage, useLocation } from 'umi';
@@ -14,7 +15,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Cascader } from 'antd';
 import MediaWall from './components/MediaWall';
-import { categoryQuery, getTermValue } from './service';
+import { categoryQuery, getTermValue, querySlug } from './service';
 import proSettings from '../../../../config/defaultSettings';
 import { history } from 'umi';
 import { element } from 'prop-types';
@@ -109,6 +110,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
+  const [slug, getSlug] = useState<string>('');
   const [options, setOptions] = useState([])
   const [selectedItems, setSelectedItems] = useState([])
   const location = useLocation<object>()
@@ -141,6 +143,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     icon: value1,
     images:value2,
     banner: value3,
+    slug: slug,
     productAttributes: productTermValues,
   });   
   
@@ -300,8 +303,17 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
+
+          <FormItem
+            {...formItemLayout}
+            label='Slug'
+            name='slug'
+          >
+            <Input disabled placeholder='Slug' />
+          </FormItem>
+
           <FormItem
             {...formItemLayout}
             label={<FormattedMessage id="formandbasic-form.category.label" />}
@@ -419,10 +431,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             ) : null}
           </FormItem>
 
+          <Divider orientation="center">Product Attributes</Divider>
           <FormItem
             name = "productAttributes"
             style = {{margin: 0, minHeight: 0}}
           >
+           
              {productTermValues.map( (value, index) => (
                 <FormItem
                   {...formItemLayout}
