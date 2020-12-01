@@ -1,361 +1,500 @@
-import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
-import { Alert, message } from 'antd';
-import React, { useState } from 'react';
-import { Dispatch, Link, connect,history } from 'umi';
+import { Form, Button, Col, Input, Popover, Progress, Row, Select, message, Tabs } from 'antd';
+import React, { FC, useState, useEffect } from 'react';
+import { Link, connect, history, FormattedMessage, formatMessage, Dispatch } from 'umi';
+
 import { StateType } from './model';
+import { AccountLogin } from './service';
 import styles from './style.less';
-import {LoginParamsType,fakeAccountLogin} from './service';
-import LoginFrom from './components/Login';
-import { parse } from 'qs';
 
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginFrom;
-interface LoginProps {
+const FormItem = Form.Item;
+const { Option } = Select;
+const InputGroup = Input.Group;
+
+const { TabPane } = Tabs;
+
+function callback(key) {
+  console.log(key);
+}
+
+
+const passwordStatusMap = {
+  ok: (
+    <div className={styles.success}>
+      <FormattedMessage id="userandregister.strength.strong" />
+    </div>
+  ),
+  pass: (
+    <div className={styles.warning}>
+      <FormattedMessage id="userandregister.strength.medium" />
+    </div>
+  ),
+  poor: (
+    <div className={styles.error}>
+      <FormattedMessage id="userandregister.strength.short" />
+    </div>
+  ),
+};
+
+const passwordProgressMap: {
+  ok: 'success';
+  pass: 'normal';
+  poor: 'exception';
+} = {
+  ok: 'success',
+  pass: 'normal',
+  poor: 'exception',
+};
+
+interface RegisterProps {
   dispatch: Dispatch;
-  userAndlogin: StateType;
-  submitting?: boolean;
+  userAndregister: StateType;
+  submitting: boolean;
 }
 
-
-export function getPageQuery() {
-  return parse(window.location.href.split('?')[1]);
+export interface UserRegisterParams {
+  mail: string;
+  password: string;
+  confirm: string;
+  mobile: string;
+  captcha: string;
+  prefix: string;
+  id: string;
+  cellNo: string;
+  otpCode: string;
+  shopTitle: string;
 }
 
+const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) => {
+  const [count, setcount]: [number, any] = useState(0);
+  const [visible, setvisible]: [boolean, any] = useState(false);
+  const [prefix, setprefix]: [string, any] = useState('88');
+  const [popover, setpopover]: [boolean, any] = useState(false);
+  const [resStatus, setResStatus] = useState<string>('emailOrCellno');
+  const [curUserId, setCurUserId] = useState<number>();
+  const [loginForm, setLoginForm] = useState<any>({
+    mail: '',
+    mobile: '',
+    id: '',
+    cellNo: '',
+    otpCode: '',
+    shopTitle: '',
+  })
 
-// const res = yield.call fakeAccountLogin(params)
+  const confirmDirty = false;
+  let interval: number | undefined;
+  const [form] = Form.useForm();
+  const [form2] = Form.useForm();
+  useEffect(() => {
+    console.log("userAndregister==================", userAndregister);
 
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => (
-  <Alert
-    style={{
-      marginBottom: 24,
-    }}
-    message={content}
-    type="error"
-    showIcon
-  />
+    if (!userAndregister) {
+      return;
+    }
+    const account = form.getFieldValue('mail');
+    
+    
+    if (userAndregister.status === 'ok') {
+      delete userAndregister.status;
+      message.success('Registration success!');
+      history.push({
+        pathname: '/user/register-result',
+        state: {
+          account,
+        },
+      });
+    }
+    else {
+      
+    }
+  }, [userAndregister]);
+  useEffect(
+    () => () => {
+      clearInterval(interval);
+    },
+    [],
   );
-
-  
-  
-
-const Login: React.FC<LoginProps> = (props) => {
-  const { userAndlogin = {}, submitting } = props;
-  const { status, type: loginType } = userAndlogin;
-  const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState<string>('account');
-  const [showOTP, setshowOTP] = useState(false);
-  const [showOTP2, setshowOTP2] = useState(false);
-  const [showPass, setshowPass] = useState(false);
-  const [showNewPass, setshowNewPass] = useState(false);
-  const [showShop, setshowShop] = useState(false);
-  const [showPasss, setshowPasss] = useState(false);
-  const [currentUser, setCurrentUser] = useState<number>();
-  const [currStatus, setCurrStatus] = useState<string>();
-  let currentStatus = ''
-  
-  
-  const handleSubmit =  (values: LoginParamsType) => {
-    
-    // console.log('values...............', values);
-    
-    
-    
-    
-    // let status=''
-    if(currentUser!=undefined) values.userId = currentUser
-    if(currStatus!=undefined) values.status = currStatus
-    fakeAccountLogin(values)
-    .then((res) => {
-      // console.log('vvvvvvvvvvvvvvvvvvvvvvvv', res);
-      setCurrentUser(res.userId)
-      currentStatus = res.status;
-      
-      if(res.status=='invalidOtpCode' ||  res.status=='invalidOtp') message.error('Invalid OTP Code');
-      else setCurrStatus(res.status) 
-
-      // console.log('stateeeeeeeee', currentStatus);
-      ////////Phone Start////////////
-
-      if (currentStatus == 'oldSeller' && res.otpCode) {
-        showOTP ? setshowOTP(false) : setshowOTP(true)
-      } else if (currentStatus == 'oldSeller') {
-        showPasss ? setshowPasss(false) : setshowPasss(true)
+  const onGetCaptcha = () => {
+    let counts = 59;
+    setcount(counts);
+    interval = window.setInterval(() => {
+      counts -= 1;
+      setcount(counts);
+      if (counts === 0) {
+        clearInterval(interval);
       }
-      if (currentStatus == 'setYourShopName') {
-        showShop ? setshowShop(false) : setshowShop(true)
-      }
-      if (currentStatus == 'newSeller') {
-        showOTP ? setshowOTP(false) : setshowOTP(true)
-      }
-      ////////Phone End////////////
-      if (currentStatus == 'oldSeller') {
-        showPass ? setshowPass(false) : setshowPass(true)
-      }if (currentStatus == 'newSeller') {
-        showOTP2 ? setshowOTP2(false) : setshowOTP2(true)
-      }if (currentStatus == 'setYourPassword') {
-        showNewPass ? setshowNewPass(false) : setshowNewPass(true)
-      }if (currentStatus == "ok") {
-        message.success('Successfully Logged in');
-        // const urlParams = new URL(window.location.href);
-        // const params = getPageQuery();
-        // let { redirect } = params as { redirect: string };
-        // if (redirect) {
-        //   const redirectUrlParams = new URL(redirect);
-        //   if (redirectUrlParams.origin === urlParams.origin) {
-        //     redirect = redirect.substr(urlParams.origin.length);
-        //     if (redirect.match(/^\/.*#/)) {
-        //       redirect = redirect.substr(redirect.indexOf('#') + 1);
-        //     }
-        //   } else {
-        //     window.location.href = redirect;
-        //     return;
-        //   }
-        // }
-        // history.replace(redirect || '/');
-        history.replace('/dashboard/monitor');
-      } else {
-        
-      }
-      
-      // console.log('status===', status);
-      
-    }).catch((err) => {
-      console.log('Error:',err.message);
-    })
-   
-   
-    
-    // const { dispatch } = props;
+    }, 1000);
+  };
+  const getPasswordStatus = () => {
+    const value = form.getFieldValue('password');
+    if (value && value.length > 9) {
+      return 'ok';
+    }
+    if (value && value.length > 5) {
+      return 'pass';
+    }
+    return 'poor';
+  };
+  const onFinish = async(values: any) => {
+    if(loginForm.id) values.id = loginForm.id
+    if(loginForm.password) values.password = loginForm.password
+    if(loginForm.mail) values.mail = loginForm.mail
+    if(loginForm.shopTitle) values.shopTitle = loginForm.shopTitle
+    if(loginForm.cellNo) values.cellNo = loginForm.cellNo
+    if(loginForm.otpCode) values.otpCode = loginForm.otpCode
+
+
+    let response = await AccountLogin(values);
+    if (response.status === 'ok') {
+      message.success('login successful!');
+      // const urlParams = new URL(window.location.href);
+      // const params = getPageQuery();
+      // let { redirect } = params as { redirect: string };
+      // if (redirect) {
+      //   const redirectUrlParams = new URL(redirect);
+      //   if (redirectUrlParams.origin === urlParams.origin) {
+      //     redirect = redirect.substr(urlParams.origin.length);
+      //     if (redirect.match(/^\/.*#/)) {
+      //       redirect = redirect.substr(redirect.indexOf('#') + 1);
+      //     }
+      //   } else {
+      //     window.location.href = redirect;
+      //     return;
+      //   }
+      // }
+      history.replace('/dashboard/monitor');
+    }
+    else {
+      setResStatus(response.status)
+      delete response.user.password
+      setLoginForm(response.user)
+      // message.error(response);
+      // return;
+    }
+
     // dispatch({
-    //   type: 'userAndlogin/login',
+    //   type: 'userAndregister/submit',
     //   payload: {
     //     ...values,
+    //     prefix,
     //   },
     // });
-    
+  };
+  const checkConfirm = (_: any, value: string) => {
+    const promise = Promise;
+    if (value && value !== form.getFieldValue('password')) {
+      return promise.reject(formatMessage({ id: 'userandregister.password.twice' }));
+    }
+    return promise.resolve();
+  };
+  const checkPassword = (_: any, value: string) => {
+    const promise = Promise;
+    // 没有值的情况
+    if (!value) {
+      setvisible(!!value);
+      return promise.reject(formatMessage({ id: 'userandregister.password.required' }));
+    }
+    // 有值的情况
+    if (!visible) {
+      setvisible(!!value);
+    }
+    setpopover(!popover);
+    if (value.length < 6) {
+      return promise.reject('');
+    }
+    if (value && confirmDirty) {
+      form.validateFields(['confirm']);
+    }
+    return promise.resolve();
+  };
+  const changePrefix = (value: string) => {
+    setprefix(value);
+  };
+  const renderPasswordProgress = () => {
+    const value = form.getFieldValue('password');
+    const passwordStatus = getPasswordStatus();
+    return value && value.length ? (
+      <div className={styles[`progress-${passwordStatus}`]}>
+        <Progress
+          status={passwordProgressMap[passwordStatus]}
+          className={styles.progress}
+          strokeWidth={6}
+          percent={value.length * 10 > 100 ? 100 : value.length * 10}
+          showInfo={false}
+        />
+      </div>
+    ) : null;
   };
   
+
+
   return (
     <div className={styles.main}>
-      <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-        <Tab key="account" tab="Phone">
-          {status === 'error' && loginType === 'account' && !submitting && (
-            <LoginMessage content="OOOOOO（admin/ant.design）" />
-          )}
-          
-            <UserName
-            name="cellNo"
-            placeholder="Phone Number"
-            rules={[
-              {
-                required: true,
-                message: 'Please Provide Your Phone Number',
-              },
-              {
-                pattern: /^01\d{9}$/,
-                message: 'Phone Number is not Valid',
-              },
-            ]}
-          />
-          {showPasss?
-              <UserName
-              name="otpCode"
-              placeholder="Please Enter Your Password"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please Enter Your Password',
-                },
-              ]}
-            />
-            :null
-          }
-        
-          {showOTP?
-              <UserName
-              name="otpCode"
-              placeholder="Please Enter Four Digit OTP Code"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please Enter Four Digit OTP Code',
-                },
-              ]}
-            />
-            :null
-          }
-          {showShop?
-              <UserName
-              name="shopName"
-              placeholder="Please Enter your SHOP NAME"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please Enter your SHOP NAME',
-                },
-              ]}
-            />
-            :null
-          }
-        
-        </Tab>
-        <Tab key="mobile" tab="Email">
-          {status === 'error' && loginType === 'mobile' && !submitting && (
-            <LoginMessage content="验证码错误" />
-          )}
-          <Mobile
-            name="mail"
-            placeholder="Email: test@gmail.com"
-            rules={[
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail!',
-              },
-              {
-                required: true,
-                message: 'Please input your E-mail!',
-              },
-            ]}
-          />
-          
-          {showOTP2?
-              <UserName
-              name="otpCode"
-              placeholder="Please Enter Four Digit OTP Code"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please Enter Four Digit OTP Code',
-                },
-              ]}
-            />
-            :null
-          }
-          {showNewPass ? (
-            <Password
-            name="newPassword"
-            placeholder="Please Enter Your New Password"
-            rules={[
-              {
-                required: false,
-                message: 'Please Enter Your New Password',
-              },
-            ]}
-            />
-            
-          )
-            :null
-          }
-          {showNewPass ? (
-            <Password
-                name="retypePassword"
-                placeholder="Please Enter Your Password Again"
-                dependencies={['newPassword']}
-                hasFeedback
+      
+      <Tabs defaultActiveKey="1" onChange={callback}>
+        <TabPane tab="Email" key="1">
+          <Form form={form} name="email" onFinish={onFinish}>
+            {resStatus == 'emailOrCellno' ? (
+              <FormItem
+                name="mail"
                 rules={[
                   {
                     required: true,
-                    message: 'Please confirm your password!',
+                    message: formatMessage({ id: 'userandregister.email.required' }),
                   },
-                  ({ getFieldValue }) => ({
-                    validator(rule, value) {
-                      if (!value || getFieldValue('newPassword') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('Passwords that you entered does\'t not match!');
-                    },
-                  }),
+                  {
+                    type: 'email',
+                    message: formatMessage({ id: 'userandregister.email.wrong-format' }),
+                  },
                 ]}
-            />
-            
-          )
-            :null
-          }
-          {showShop?
-              <Mobile
-              name="shopName"
-              placeholder="Please Enter your SHOP NAME"
+              >
+                <Input
+                  size="large"
+                  placeholder={formatMessage({ id: 'userandregister.email.placeholder' })}
+                />
+              </FormItem>
+            ):null} 
+            {resStatus == 'setOtp' ? (
+              <FormItem
+              name="otpCode"
               rules={[
                 {
                   required: true,
-                  message: 'Please Enter your SHOP NAME',
+                  message: 'Please Enter Your Four Digit OTP Code!',
                 },
               ]}
-            />
-            :null
-          }
-          {showPass?
-              <Password
-              name="password"
-              placeholder="Please Enter Your Password"
-              rules={[
-                {
-                  required: false,
-                  message: 'Please Enter Your Password',
-                },
-              ]}
-            />
-            :null
-          }
-          {/* <Captcha
-            name="captcha"
-            placeholder="验证码"
-            countDown={120}
-            getCaptchaButtonText=""
-            getCaptchaSecondText="秒"
-            rules={[
-              {
-                required: true,
-                message: '请输入验证码！',
-              },
-            ]}
-          /> */}
-        </Tab>
-        {/* <div>
-          <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
-            Automatic log-in
-          </Checkbox>
-          <a
-            style={{
-              float: 'right',
-            }}
-          >
-           Forget password
-          </a>
-        </div> */}
-        <Submit
-          loading={submitting}
-          style={{marginTop: 0}}
-        >Login/Signup</Submit>
-        {/* <div className={styles.other}>
-          Other login methods
-          <AlipayCircleOutlined className={styles.icon} />
-          <TaobaoCircleOutlined className={styles.icon} />
-          <WeiboCircleOutlined className={styles.icon} />
-          <Link className={styles.register} to="/user/register">
-          Register account
-          </Link>
-        </div> */}
-      </LoginFrom>
+            >
+              <Input
+                size="large"
+                placeholder='OTP Code'
+              />
+            </FormItem>
+            ):null} 
+          
+            {resStatus == 'password' ? (
+                <FormItem
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: formatMessage({ id: 'userandregister.password.required' }),
+                    },
+                    {
+                      validator: checkPassword,
+                    },
+                  ]}
+                >
+                  <Input
+                    size="large"
+                    type="password"
+                    placeholder={formatMessage({ id: 'userandregister.password.placeholder' })}
+                  />
+                </FormItem>
+            ):null} 
+            {resStatus == 'setPassword' ? (
+              <>
+                <Popover
+                  getPopupContainer={(node) => {
+                    if (node && node.parentNode) {
+                      return node.parentNode as HTMLElement;
+                    }
+                    return node;
+                  }}
+                  content={
+                    visible && (
+                      <div style={{ padding: '4px 0' }}>
+                        {passwordStatusMap[getPasswordStatus()]}
+                        {renderPasswordProgress()}
+                        <div style={{ marginTop: 10 }}>
+                          <FormattedMessage id="userandregister.strength.msg" />
+                        </div>
+                      </div>
+                    )
+                  }
+                  overlayStyle={{ width: 240 }}
+                  placement="right"
+                  visible={visible}
+                >
+                  <FormItem
+                    name="password"
+                    className={
+                      form.getFieldValue('password') &&
+                      form.getFieldValue('password').length > 0 &&
+                      styles.password
+                    }
+                    rules={[
+                      {
+                        validator: checkPassword,
+                      },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      type="password"
+                      placeholder={formatMessage({ id: 'userandregister.password.placeholder' })}
+                    />
+                  </FormItem>
+              </Popover>
+              <FormItem
+                name="confirm"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'userandregister.confirm-password.required' }),
+                  },
+                  {
+                    validator: checkConfirm,
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  type="password"
+                  placeholder={formatMessage({ id: 'userandregister.confirm-password.placeholder' })}
+                />
+              </FormItem>
+              </>
+            ): null}
+            {resStatus == 'setShop' ? (
+              <FormItem
+                name="shopTitle"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'userandregister.shopTitle.required' }),
+                  },
+                ]}
+              >
+                <Input 
+                  size="large"
+                  placeholder={formatMessage({ id: 'userandregister.shopTitle.placeholder' })} />
+              </FormItem>
+            ):null}
+            <FormItem>
+              <Button
+                size="large"
+                loading={submitting}
+                className={styles.submit}
+                type="primary"
+                htmlType="submit"
+              >
+                Login / Sign Up
+              </Button>
+            </FormItem>
+          
+          </Form>
+        </TabPane>
+      
+        <TabPane tab="Phone" key="2">
+          <Form form={form2} name="phone" onFinish={onFinish}>
+            {resStatus == 'emailOrCellno' ? (
+              <InputGroup compact>
+                <Select size="large" value={prefix} onChange={changePrefix} style={{ width: '20%' }}>
+                  <Option value="88">88</Option>
+                  {/* <Option value="87">+87</Option> */}
+                </Select>
+                <FormItem
+                  style={{ width: '80%' }}
+                  name="cellNo"
+                  rules={[
+                    {
+                      required: true,
+                      message: formatMessage({ id: 'userandregister.phone-number.required' }),
+                    },
+                    {
+                      pattern: /^\d{11}$/,
+                      message: formatMessage({ id: 'userandregister.phone-number.wrong-format' }),
+                    },
+                  ]}
+                >
+                  <Input
+                    size="large"
+                    placeholder={formatMessage({ id: 'userandregister.phone-number.placeholder' })}
+                  />
+                </FormItem>
+              </InputGroup>
+            ):null} 
+            {resStatus == 'setOtp' ? (
+              <Row gutter={8}>
+                <Col span={16}>
+                  <FormItem
+                    name="otpCode"
+                    rules={[
+                      {
+                        //required: true,
+                        message: formatMessage({ id: 'userandregister.verification-code.required' }),
+                      },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      placeholder={formatMessage({ id: 'userandregister.verification-code.placeholder' })}
+                    />
+                  </FormItem>
+                </Col>
+                <Col span={8}>
+                  <Button
+                    size="large"
+                    disabled={!!count}
+                    className={styles.getCaptcha}
+                    onClick={onGetCaptcha}
+                  >
+                    {count
+                      ? `${count} s`
+                      : formatMessage({ id: 'userandregister.register.get-verification-code' })}
+                  </Button>
+                </Col>
+              </Row>
+            ):null} 
+            {resStatus == 'setShop' ? (
+              <FormItem
+                name="shopTitle"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'userandregister.shopTitle.required' }),
+                  },
+                ]}
+              >
+                <Input 
+                  size="large"
+                  placeholder={formatMessage({ id: 'userandregister.shopTitle.placeholder' })} />
+              </FormItem>
+            ):null} 
+        
+            <FormItem>
+              <Button
+                size="large"
+                loading={submitting}
+                className={styles.submit}
+                type="primary"
+                htmlType="submit"
+              >
+                Login / Sign Up
+              </Button>
+            </FormItem>
+          </Form>
+        </TabPane>
+        
+      </Tabs>
+
     </div>
   );
 };
-
-export default Login;
-//   connect(
+export default Register
+// connect
+// (
 //   ({
-//     userAndlogin,
+//     userAndregister,
 //     loading,
 //   }: {
-//     userAndlogin: StateType;
+//     userAndregister: StateType;
 //     loading: {
 //       effects: {
 //         [key: string]: boolean;
 //       };
 //     };
 //   }) => ({
-//     userAndlogin,
-//     submitting: loading.effects['userAndlogin/login'],
+//     userAndregister,
+//     submitting: loading.effects['userAndregister/submit'],
 //   }),
-// )(Login);
+// )(Register);

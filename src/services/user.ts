@@ -21,10 +21,10 @@ export async function queryCurrent(): Promise<any> {
   // console.log("Hello LocalStorage=======",localStorage.getItem('access_token'));
   let sellerInfo = await request('/seller/currentSeller');
   console.log("value=============", sellerInfo);
-  if(sellerInfo && sellerInfo.hasOwnProperty("shopName") && sellerInfo.shopName)
+  if(sellerInfo && sellerInfo.hasOwnProperty("shopTitle") && sellerInfo.shopTitle)
   {
-    localStorage.setItem('shopName', sellerInfo.shopName)
-    sellerInfo.name = sellerInfo.shopName;
+    localStorage.setItem('shopTitle', sellerInfo.shopTitle)
+    sellerInfo.name = sellerInfo.shopTitle;
     sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
     return sellerInfo;
   }

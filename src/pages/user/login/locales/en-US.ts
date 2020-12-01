@@ -75,4 +75,19 @@ export default {
   'userandlogin.option.B': 'Colleague B',
   'userandlogin.option.C': 'Colleague C',
   'userandlogin.navBar.lang': 'Languages',
+
+
+
+
+  'userandregister.shopTitle.required': 'Please enter your Shop Name',
+  'userandregister.shopTitle.placeholder': 'Shope Name',
+  'userandregister.address.required': 'Please enter your Address',
+  'userandregister.address.placeholder': 'Address',
+  'userandregister.DOB.required': 'Date Of Birth',
+  'userandregister.DOB.label': 'Date Of Birth',
+  'userandregister.DOB.placeholder': 'Date Of Birth',
+  'userandregister.gender.required': 'Please enter your Gender',
+  'userandregister.gender.placeholder': 'Gender',
+  'userandregister.nationality.required': 'Please enter your Nationality',
+  'userandregister.nationality.placeholder': 'Nationality',
 };

@@ -1,6 +1,6 @@
 export default {
-  'userandregister.shopname.required': 'Please enter your Shop Name',
-  'userandregister.shopname.placeholder': 'Shope Name',
+  'userandregister.shopTitle.required': 'Please enter your Shop Name',
+  'userandregister.shopTitle.placeholder': 'Shope Name',
   'userandregister.address.required': 'Please enter your Address',
   'userandregister.address.placeholder': 'Address',
   'userandregister.DOB.required': 'Date Of Birth',

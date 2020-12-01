@@ -172,17 +172,17 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
       </h3>
       <Form form={form} name="UserRegister" onFinish={onFinish}>
         <FormItem
-          name="shopName"
+          name="shopTitle"
           rules={[
             {
               required: true,
-              message: formatMessage({ id: 'userandregister.shopname.required' }),
+              message: formatMessage({ id: 'userandregister.shopTitle.required' }),
             },
           ]}
         >
           <Input 
             size="large"
-            placeholder={formatMessage({ id: 'userandregister.shopname.placeholder' })} />
+            placeholder={formatMessage({ id: 'userandregister.shopTitle.placeholder' })} />
         </FormItem>
 
         <FormItem
@@ -203,6 +203,7 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
             placeholder={formatMessage({ id: 'userandregister.email.placeholder' })}
           />
         </FormItem>
+        
         <Popover
           getPopupContainer={(node) => {
             if (node && node.parentNode) {
@@ -263,6 +264,7 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
             placeholder={formatMessage({ id: 'userandregister.confirm-password.placeholder' })}
           />
         </FormItem>
+        
         {/* <FormItem
           name="address"
           rules={[
