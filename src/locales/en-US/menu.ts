@@ -40,9 +40,15 @@ export default {
   'menu.exception.not-find': '404',
   'menu.exception.server-error': '500',
   'menu.exception.trigger': 'Trigger',
-  'menu.account': 'Account',
-  'menu.account.center': 'Account Center',
-  'menu.account.settings': 'Account Settings',
+
+  'menu.account': 'Settings',
+  'menu.account.center': 'User Settings',
+  'menu.account.settings': 'Shop Profile',
+
+  // 'menu.settings': 'Settings',
+  // 'menu.settings.center': 'Account Center',
+  // 'menu.settings.settings': 'Account Settings',
+
   'menu.account.trigger': 'Trigger Error',
   'menu.account.logout': 'Logout',
   'menu.editor': 'Graphic Editor',

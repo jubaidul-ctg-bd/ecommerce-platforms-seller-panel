@@ -287,25 +287,25 @@ export default defineConfig({
             //     },
             //   ],
             // },
-            // {
-            //   name: 'account',
-            //   icon: 'user',
-            //   path: '/account',
-            //   routes: [
-            //     {
-            //       name: 'center',
-            //       icon: 'smile',
-            //       path: '/account/center',
-            //       component: './account/center',
-            //     },
-            //     {
-            //       name: 'settings',
-            //       icon: 'smile',
-            //       path: '/account/settings',
-            //       component: './account/settings',
-            //     },
-            //   ],
-            // },
+            {
+              name: 'account',
+              icon: 'SettingOutlined',
+              path: '/account',
+              routes: [
+                {
+                  name: 'settings',
+                  icon: 'smile',
+                  path: '/account/settings',
+                  component: './account/settings',
+                },
+                // {
+                //   name: 'center',
+                //   icon: 'smile',
+                //   path: '/account/center',
+                //   component: './account/center',
+                // }
+              ],
+            },
             // {
             //   name: 'editor',
             //   icon: 'highlight',

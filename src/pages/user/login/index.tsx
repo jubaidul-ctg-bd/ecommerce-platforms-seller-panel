@@ -144,7 +144,10 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
 
 
     let response = await AccountLogin(values);
-    if (response.status === 'ok') {
+    if( !(response.status=='ok' || response.status=='setOtp' || response.status=='setPassword' || response.status=='setShop' || response.status=='password') ) {
+      message.error(response)
+    }
+    else if (response.status === 'ok') {
       message.success('login successful!');
       // const urlParams = new URL(window.location.href);
       // const params = getPageQuery();
@@ -165,7 +168,6 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
     }
     else {
       setResStatus(response.status)
-      delete response.user.password
       setLoginForm(response.user)
       // message.error(response);
       // return;

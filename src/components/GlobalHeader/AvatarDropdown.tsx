@@ -65,7 +65,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
           </Menu.Item>
         )} */}
 
-        <Menu.Item key="shopProfile">
+        <Menu.Item key="settings">
         <ShopOutlined />
           Shop Profile
         </Menu.Item>
