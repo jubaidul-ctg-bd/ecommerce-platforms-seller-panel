@@ -2,16 +2,25 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Input, Select, Upload, Form, message } from 'antd';
 import { connect, FormattedMessage, formatMessage } from 'umi';
 import React, { Component } from 'react';
-
+import proSettings from '../../../../../config/defaultSettings';
 import { CurrentUser } from '../data.d';
 import GeographicView from './GeographicView';
 import PhoneView from './PhoneView';
 import styles from './BaseView.less';
+import { updateRule, upload } from '../service';
+import { update } from 'lodash';
 
 const { Option } = Select;
 
+const uploadAbatar = async(file, setAvatar) => {
+  let val = await upload(file)
+  console.log(val)
+  setAvatar({avatar: proSettings.baseUrl+"/media/image/"+val})
+  updateRule({avatar: val})
+}
+
 // 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({ avatar }: { avatar: string }) => (
+const AvatarView = ({ avatar, setAvatar }: { avatar: string, setAvatar: any }) => (
   <>
     <div className={styles.avatar_title}>
       <FormattedMessage id="accountandsettings.basic.avatar" defaultMessage="Avatar" />
@@ -19,7 +28,7 @@ const AvatarView = ({ avatar }: { avatar: string }) => (
     <div className={styles.avatar}>
       <img src={avatar} alt="avatar" />
     </div>
-    <Upload showUploadList={false}>
+    <Upload showUploadList={false} action={(file) => uploadAbatar(file, setAvatar)}>
       <div className={styles.button_view}>
         <Button>
           <UploadOutlined />
@@ -72,12 +81,16 @@ interface BaseViewProps {
 
 class BaseView extends Component<BaseViewProps> {
   view: HTMLDivElement | undefined = undefined;
+  
+  state = {
+    avatar: this.props.currentUser?.avatar
+  };
 
   getAvatarURL() {
     const { currentUser } = this.props;
     if (currentUser) {
       if (currentUser.avatar) {
-        return currentUser.avatar;
+        return proSettings.baseUrl+"/media/image/"+currentUser.avatar;
       }
       const url = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
       return url;
@@ -89,13 +102,21 @@ class BaseView extends Component<BaseViewProps> {
     this.view = ref;
   };
 
-  handleFinish = () => {
-    message.success(formatMessage({ id: 'accountandsettings.basic.update.success' }));
+  handleFinish = async(values) => {
+    let response = await updateRule(values);
+    if(response.status=='error') {
+      message.error(response.msg)
+    } 
+    else {
+      message.success(formatMessage({ id: 'accountandsettings.basic.update.success' }));
+    }
   };
 
   render() {
     const { currentUser } = this.props;
-
+    const { avatar } = this.state
+    console.log("avatar======",avatar);
+    
     return (
       <div className={styles.baseView} ref={this.getViewDom}>
         <div className={styles.left}>
@@ -106,7 +127,7 @@ class BaseView extends Component<BaseViewProps> {
             hideRequiredMark
           >
             <Form.Item
-              name="email"
+              name="mail"
               label={formatMessage({ id: 'accountandsettings.basic.email' })}
               rules={[
                 {
@@ -115,10 +136,10 @@ class BaseView extends Component<BaseViewProps> {
                 },
               ]}
             >
-              <Input />
+              <Input disabled={currentUser.mail}/>
             </Form.Item>
             <Form.Item
-              name="name"
+              name="shopTitle"
               label={formatMessage({ id: 'accountandsettings.basic.nickname' })}
               rules={[
                 {
@@ -130,7 +151,7 @@ class BaseView extends Component<BaseViewProps> {
               <Input />
             </Form.Item>
             <Form.Item
-              name="profile"
+              name="address"
               label={formatMessage({ id: 'accountandsettings.basic.profile' })}
               rules={[
                 {
@@ -144,7 +165,7 @@ class BaseView extends Component<BaseViewProps> {
                 rows={4}
               />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name="country"
               label={formatMessage({ id: 'accountandsettings.basic.country' })}
               rules={[
@@ -184,9 +205,9 @@ class BaseView extends Component<BaseViewProps> {
               ]}
             >
               <Input />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
-              name="phone"
+              name="cellNo"
               label={formatMessage({ id: 'accountandsettings.basic.phone' })}
               rules={[
                 {
@@ -209,7 +230,7 @@ class BaseView extends Component<BaseViewProps> {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={this.getAvatarURL()} />
+          <AvatarView setAvatar={(val) =>this.setState(val)} avatar={avatar} />
         </div>
       </div>
     );

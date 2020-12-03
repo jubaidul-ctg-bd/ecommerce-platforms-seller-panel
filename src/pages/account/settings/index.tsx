@@ -118,14 +118,16 @@ class Settings extends Component<SettingsProps, SettingsState> {
       case 'base':
         return <BaseView />;
       case 'security':
-        return <SecurityView />;
+        return // <SecurityView />;
       case 'binding':
-        return <BindingView />;
+        return // <BindingView />;
       case 'notification':
         return <NotificationView />;
       default:
         break;
     }
+
+    
 
     return null;
   };

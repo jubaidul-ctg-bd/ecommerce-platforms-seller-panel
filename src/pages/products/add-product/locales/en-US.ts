@@ -66,6 +66,10 @@ export default {
   'formandbasic-form.radio.unpublish' : 'Unpublish',
   'formandbasic-form.status.required' : 'Please Select Product Status',
   'formandbasic-form.status.label' : 'Status',
+
+  'formandbasic-form.brand.required' : 'Please Select Product Brand',
+  'formandbasic-form.brand.label' : 'Brand',
+
   'formandbasic-form.description.label' : 'Description',
   'formandbasic-form.description.placeholder' : 'Product Description',
 

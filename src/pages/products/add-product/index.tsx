@@ -3,13 +3,13 @@ import {
   Select,
   Radio,
   Button,
-  Card,  
+  Card,
   Input,
   Modal,
   Image,
   Divider,
 } from 'antd';
-import {  MinusCircleOutlined, PictureOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PictureOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect, Dispatch, FormattedMessage, formatMessage, useLocation } from 'umi';
 import React, { FC, useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -22,43 +22,43 @@ import { element } from 'prop-types';
 import { fromPairs } from 'lodash';
 import FieldSetArray from './components/FieldSetArray';
 
+//['zhejiang', 'hangzhou', 'xihu']
 
 
-
-// const options = [
-//   {
-//     value: 'zhejiang',
-//     label: 'Zhejiang',
-//     children: [
-//       {
-//         value: 'hangzhou',
-//         label: 'Hangzhou',
-//         children: [
-//           {
-//             value: 'xihu',
-//             label: 'West Lake',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     value: 'jiangsu',
-//     label: 'Jiangsu',
-//     children: [
-//       {
-//         value: 'nanjing',
-//         label: 'Nanjing',
-//         children: [
-//           {
-//             value: 'zhonghuamen',
-//             label: 'Zhong Hua Men',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
+const optionss = [
+  {
+    value: 'zhejiang',
+    label: 'Zhejiang',
+    children: [
+      {
+        value: 'hangzhou',
+        label: 'Hangzhou',
+        children: [
+          {
+            value: 'xihu',
+            label: 'West Lake',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    value: 'jiangsu',
+    label: 'Jiangsu',
+    children: [
+      {
+        value: 'nanjing',
+        label: 'Nanjing',
+        children: [
+          {
+            value: 'zhonghuamen',
+            label: 'Zhong Hua Men',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 // function onChange(value) {
 //   //console.log(value);
@@ -66,7 +66,7 @@ import FieldSetArray from './components/FieldSetArray';
 
 // Just show the latest item.
 function displayRender(label) {
-  return label[label.length - 1];
+  return label[label.length - 1];  
 }
 
 
@@ -111,11 +111,16 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
   const [slug, getSlug] = useState<string>('');
+  const location = useLocation<object>()
+  const [brand, setBrand] = useState<string>('');
   const [options, setOptions] = useState([])
   const [selectedItems, setSelectedItems] = useState([])
-  const location = useLocation<object>()
 
-  if(location.state==undefined) location.state = []
+  if (location.state == undefined) {
+    location.state = []
+    // location.state.brand = ''
+    // location.state.brand.title = ''
+  }
   const [productTermValues, setProductTermValue] = useState([])
 
 
@@ -133,37 +138,45 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   //   quantity: location.state.quantity,
   // })
 
-  
+
 
   useEffect(() => {
-    getOptions();     
-  },[])
+    getOptions();
+  }, [])
 
-  form.setFieldsValue ({
+  form.setFieldsValue({
     icon: value1,
-    images:value2,
+    images: value2,
     banner: value3,
     slug: slug,
     productAttributes: productTermValues,
-  });   
-  
-  
-  const getOptions = async() => {
+  });
+
+
+  const getOptions = async () => {
     let val = await categoryQuery();
     let values = []
     setOptions(val);
-    
-    if(location.state.productTermValues==undefined) location.state.productTermValues = []
+    if (location.state.productTermValues == undefined) {
+      location.state.productTermValues = []
+    }
     else {
-      console.log("val====================",location.state.productTermValues)
-      let val = await getTermValue({id: location.state.category.id})
+      location.state.brand = location.state.brand.title
+      location.state.category = [location.state.category.id]
+
+      console.log("location.state.category", location.state.category);
+      
+      let val = await getTermValue({ id: location.state.category.id })
       val.map((element, index) => {
         element.productTermValue = location.state.productTermValues[index].termValue
       })
       setProductTermValue(val);
       getSlug(location.state.slug)
     }
-    
+
+    let brands = await categoryQuery({ term: 'Brand' });
+    setSelectedItems(brands)
+
   }
 
   const update = {
@@ -201,8 +214,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   // };
 
   const onFinish = (values: { [key: string]: any }) => {
-    if(location.state!=undefined && location.state.id!=undefined) values.id = location.state.id
-    
+    if (location.state != undefined && location.state.id != undefined) values.id = location.state.id
+
     const { dispatch } = props;
     dispatch({
       type: 'categoryAdd/submitRegularForm',
@@ -216,7 +229,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   };
 
   const onFinishProAttr = (values: { [key: string]: any }) => {
-      console.log("onFinishProAttr========", values);
+    console.log("onFinishProAttr========", values);
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -226,7 +239,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   const onValuesChange = (changedValues: { [key: string]: any }) => {
     const { publicType } = changedValues;
-    
     if (publicType) setShowPublicUsers(publicType === '2');
   };
 
@@ -238,15 +250,15 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const getUrl = (e) => {
     handleModalVisible(e.modelSate);
     updateName(e.name);
-    if(e.name=="icon") updateValue1(e.url);
-    else if(e.name=="images")updateValue2(e.url);
-    else if(e.name=="banner")updateValue3(e.url);
+    if (e.name == "icon") updateValue1(e.url);
+    else if (e.name == "images") updateValue2(e.url);
+    else if (e.name == "banner") updateValue3(e.url);
   }
 
-  const onChangeCascader = async(value) => {
-    let val = await getTermValue({id: value[value.length - 1]})
-    console.log("val====================",val)
-   
+  const onChangeCascader = async (value) => {
+    let val = await getTermValue({ id: value[value.length - 1] })
+    console.log("val====================", val)
+
     setProductTermValue(val)
   }
 
@@ -268,8 +280,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
 
   return (
-    <PageHeaderWrapper 
-      // content={<FormattedMessage id="formandbasic-form.basic.description" />}
+    <PageHeaderWrapper
+    // content={<FormattedMessage id="formandbasic-form.basic.description" />}
     >
       <Card bordered={false}>
         <Form
@@ -282,8 +294,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           onValuesChange={onValuesChange}
           initialValues={{
             title: location.state.title,
-            categories: location.state.categories,
-            order: location.state.order,
+            // categories: location.state.category,
+            //brand: location.state.brand,
             description: location.state.description,
             name: location.state.name,
             images: location.state.images,
@@ -292,7 +304,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             productAttributes: location.state.productTermValues,
             quantity: location.state.quantity,
             // status: location.state.status,
-         }}
+          }}
         >
 
           <FormItem
@@ -306,7 +318,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-            <Input onBlur={async(e)=> getSlug(await querySlug({slug: e.target.value}))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
+            <Input onBlur={async (e) => getSlug(await querySlug({ slug: e.target.value }))} placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} />
           </FormItem>
 
           <FormItem
@@ -316,27 +328,54 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           >
             <Input disabled placeholder='Slug' />
           </FormItem>
-
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.category.label" />}
-            name="categories"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.category.required' }),
-              },
-            ]}
-          >
-            <Cascader
-              fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
-              options={options}
-              expandTrigger="hover"
-              displayRender={displayRender}
-              onChange={onChangeCascader}
-              changeOnSelect={true}              
-            />
-          </FormItem>    
+          {options.length ? (
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.category.label" />}
+                name="categories"
+                rules={[
+                  {
+                    required: true,
+                    message: formatMessage({ id: 'formandbasic-form.category.required' }),
+                  },
+                ]}
+              >
+                <Cascader
+                  // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
+                  options={options}
+                  expandTrigger="hover"
+                  // displayRender={displayRender}
+                  // defaultValue={['zhejiang', 'hangzhou', 'xihu']}
+                  onChange={onChangeCascader}
+                  changeOnSelect={true}
+                />
+              </FormItem>
+          ): null}
+          
+          {selectedItems.length ? (
+              <FormItem
+                {...formItemLayout}
+                label={<FormattedMessage id="formandbasic-form.brand.label" />}
+                name="brand"
+              >
+                <Select
+                  showSearch
+                  placeholder="Select a person"
+                  optionFilterProp="children"
+                  onChange={onChangeSelect}
+                  onSearch={onSearch}
+                  defaultValue={location.state.brand}
+                // filterOption={(input, option) =>
+                //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                // }
+                >
+                  {selectedItems.map((elment, index) => (
+                    <Option value={elment.title}>{elment.title}</Option>
+                  ))}
+                </Select>
+              </FormItem>
+          ): null}
+          
 
           <FormItem
             {...formItemLayout}
@@ -349,13 +388,13 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-          <Input
-            min={0}
-            onChange={onChange}
-            name="price"
-            suffix="TK"
-            type="number"
-          />
+            <Input
+              min={0}
+              onChange={onChange}
+              name="price"
+              suffix="TK"
+              type="number"
+            />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -368,12 +407,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               },
             ]}
           >
-          <Input
-            min={0}
-            onChange={onChange}
-            name="quantity"
-            type="number"
-          />
+            <Input
+              min={0}
+              onChange={onChange}
+              name="quantity"
+              type="number"
+            />
           </FormItem>
           <FormItem
             {...formItemLayout}
@@ -413,84 +452,84 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             {...formItemLayout}
             name="images"
             label="Images"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: formatMessage({ id: 'formandbasic-form.title.required' }),
-            //   },
-            // ]}
-            
-          >            
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: formatMessage({ id: 'formandbasic-form.title.required' }),
+          //   },
+          // ]}
+
+          >
             <Button icon={<PictureOutlined />} onClick={() => modelreq("images")} >
               Selcet Image
             </Button>
             {update.value2 ? (
-              <Input 
+              <Input
                 name="images"
                 prefix={<Image
-                width={50}
-                src={proSettings.baseUrl+"/media/image/"+update.value2}
-              />} disabled/>
+                  width={50}
+                  src={proSettings.baseUrl + "/media/image/" + update.value2}
+                />} disabled />
             ) : null}
           </FormItem>
 
           <Divider orientation="center">Product Attributes</Divider>
           <FormItem
-            name = "productAttributes"
-            style = {{margin: 0, minHeight: 0}}
+            name="productAttributes"
+            style={{ margin: 0, minHeight: 0 }}
           >
-           
-             {productTermValues.map( (value, index) => (
-                <FormItem
-                  {...formItemLayout}
-                  label={value.title}
-                >
-                  {value.type == 'text' ? (
-                    <Input placeholder={value.title} onBlur={(e) => value.productTermValue=e.target.value} defaultValue={value.productTermValue}/>
-                  ): null}
-                  
-                  {value.type == 'single-choice' ? (
-                    console.log("value.type", value.type),
-                    
-                    <Select
-                      showSearch
-                      placeholder="Select an option"
-                      optionFilterProp="children"
-                      onChange={(e) => value.productTermValue=e}
-                      // onFocus={onFocus}
-                      // onBlur={onBlur}
-                      onSearch={onSearch}
-                      defaultValue={value.productTermValue}
-                      // options={value.termValues}
-                      filterOption={(input, option) =>
-                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {value.termValues.map( (element, index) => (
-                        <Option value={element.title}>{element.title}</Option>
-                      ))}
-                    </Select>
-                  ): null}
-                  
-                  {value.type == 'multiple-choice' ? (
-                    // value.termValues.filter(o => !selectedItems.includes(o)),
-                    <Select
-                      mode="multiple"
-                      placeholder="Inserted are removed"
-                      value={value.productTermValue}
-                      onChange={(e) => handleChange(e, value)}
-                      style={{ width: '100%' }}
-                    >
-                      {value.termValues.map(item => (
-                        console.log("termValues=========", item),
-                        <Select.Option key={item.title} value={item.title}>
-                          {item.title}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  ): null}
-                </FormItem>
-              ))}
+
+            {productTermValues.map((value, index) => (
+              <FormItem
+                {...formItemLayout}
+                label={value.title}
+              >
+                {value.type == 'text' ? (
+                  <Input placeholder={value.title} onBlur={(e) => value.productTermValue = e.target.value} defaultValue={value.productTermValue} />
+                ) : null}
+
+                {value.type == 'single-choice' ? (
+                  console.log("value.type", value.type),
+
+                  <Select
+                    showSearch
+                    placeholder="Select an option"
+                    optionFilterProp="children"
+                    onChange={(e) => value.productTermValue = e}
+                    // onFocus={onFocus}
+                    // onBlur={onBlur}
+                    onSearch={onSearch}
+                    defaultValue={value.productTermValue}
+                    // options={value.termValues}
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {value.termValues.map((element, index) => (
+                      <Option value={element.title}>{element.title}</Option>
+                    ))}
+                  </Select>
+                ) : null}
+
+                {value.type == 'multiple-choice' ? (
+                  // value.termValues.filter(o => !selectedItems.includes(o)),
+                  <Select
+                    mode="multiple"
+                    placeholder="Inserted are removed"
+                    value={value.productTermValue}
+                    onChange={(e) => handleChange(e, value)}
+                    style={{ width: '100%' }}
+                  >
+                    {value.termValues.map(item => (
+                      console.log("termValues=========", item),
+                      <Select.Option key={item.title} value={item.title}>
+                        {item.title}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                ) : null}
+              </FormItem>
+            ))}
           </FormItem>
 
           <FormItem {...submitFormLayout} style={{ marginTop: 0 }}>
@@ -513,13 +552,13 @@ const BasicForm: FC<BasicFormProps> = (props) => {
         onOk={() => handleModalVisible(false)}
         width={1000}
       >
-        <MediaWall 
+        <MediaWall
           updateurl={(e) => getUrl(e)}
           reqName={name}
         >
-          
+
         </MediaWall>
-          
+
       </Modal>
 
     </PageHeaderWrapper>

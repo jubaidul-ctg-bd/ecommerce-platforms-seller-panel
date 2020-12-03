@@ -12,7 +12,9 @@ const PhoneView: React.FC<PhoneViewProps> = (props) => {
   const { value, onChange } = props;
   let values = ['', ''];
   if (value) {
-    values = value.split('-');
+    values[0] = value.substr(0, 4)
+    values[1] = value.substr(-10)
+    // values = value.split('-');
   }
 
   return (

@@ -26,8 +26,10 @@ export async function querySlug(params: { slug: string }) {
 
 
 
-export async function categoryQuery() {
-  let rqResult = request('/term/allchild');
+export async function categoryQuery(params?: { term: string }) {
+  let rqResult = request('/term/allchild', {
+    params,
+  });
   return rqResult;
 }
 

@@ -62,8 +62,8 @@ export default {
   'menu.products': 'Products',
   'menu.products.productList': 'Product List',
   'menu.products.add-product': 'Add Product',
-  'menu.products.media-center': 'Media Center',
+  'menu.products.media-center': 'Media',
 
-  'menu.media': 'Media Center',
+  'menu.media': 'Media',
   'menu.media.manage-media': 'Manage Media', 
 };

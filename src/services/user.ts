@@ -1,9 +1,6 @@
 import request from 'umi-request';
 import { history } from 'umi';
-
-// import request from '@/utils/request';
-
-// import proSettings from '../../config/defaultSettings';
+import proSettings from '../../config/defaultSettings';
 
 export async function query(): Promise<any> {
   return request('/api/users');
@@ -25,8 +22,11 @@ export async function queryCurrent(): Promise<any> {
   {
     localStorage.setItem('shopTitle', sellerInfo.shopTitle)
     sellerInfo.name = sellerInfo.shopTitle;
-    sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
-    return sellerInfo;
+    if(!sellerInfo.avatar)
+      sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
+    else 
+      sellerInfo.avatar = proSettings.baseUrl+"/media/image/"+sellerInfo.avatar
+      return sellerInfo;
   }
   else 
   {
