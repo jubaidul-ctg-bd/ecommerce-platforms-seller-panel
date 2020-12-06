@@ -162,7 +162,7 @@ const TableList: React.FC<{}> = () => {
       renderText: (val: string) => (
         <Image
           width={40}
-          src={proSettings.baseUrl+"/media/image/"+val[0]}
+          src={proSettings.baseUrl+"/media/image/"+val[0]['url']}
         />
       ),
     },

@@ -341,10 +341,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 ]}
               >
                 <Cascader
-                  // fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
+                  fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
                   options={options}
                   expandTrigger="hover"
-                  // displayRender={displayRender}
+                  displayRender={displayRender}
                   // defaultValue={['zhejiang', 'hangzhou', 'xihu']}
                   onChange={onChangeCascader}
                   changeOnSelect={true}
