@@ -66,7 +66,7 @@ const optionss = [
 
 // Just show the latest item.
 function displayRender(label) {
-  return label[label.length - 1];  
+  return label[label.length - 1];
 }
 
 
@@ -111,6 +111,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value3, updateValue3] = useState<string>('');
   const [name, updateName] = useState<string>('');
   const [slug, getSlug] = useState<string>('');
+  const [status, getStatus] = useState<string>('');
   const location = useLocation<object>()
   const [brand, setBrand] = useState<string>('');
   const [options, setOptions] = useState([])
@@ -163,9 +164,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     else {
       location.state.brand = location.state.brand.title
       location.state.category = [location.state.category.id]
+      getStatus(location.state.status)
+      updateValue2(location.state.images[0].url)
+      console.log("location.state.category", value2);
 
-      console.log("location.state.category", location.state.category);
-      
       let val = await getTermValue({ id: location.state.category.id })
       val.map((element, index) => {
         element.productTermValue = location.state.productTermValues[index].termValue
@@ -329,53 +331,53 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             <Input disabled placeholder='Slug' />
           </FormItem>
           {options.length ? (
-              <FormItem
-                {...formItemLayout}
-                label={<FormattedMessage id="formandbasic-form.category.label" />}
-                name="categories"
-                rules={[
-                  {
-                    required: true,
-                    message: formatMessage({ id: 'formandbasic-form.category.required' }),
-                  },
-                ]}
-              >
-                <Cascader
-                  fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
-                  options={options}
-                  expandTrigger="hover"
-                  displayRender={displayRender}
-                  // defaultValue={['zhejiang', 'hangzhou', 'xihu']}
-                  onChange={onChangeCascader}
-                  changeOnSelect={true}
-                />
-              </FormItem>
-          ): null}
-          
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.category.label" />}
+              name="categories"
+              rules={[
+                {
+                  required: true,
+                  message: formatMessage({ id: 'formandbasic-form.category.required' }),
+                },
+              ]}
+            >
+              <Cascader
+                fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
+                options={options}
+                expandTrigger="hover"
+                displayRender={displayRender}
+                // defaultValue={['zhejiang', 'hangzhou', 'xihu']}
+                onChange={onChangeCascader}
+                changeOnSelect={true}
+              />
+            </FormItem>
+          ) : null}
+
           {selectedItems.length ? (
-              <FormItem
-                {...formItemLayout}
-                label={<FormattedMessage id="formandbasic-form.brand.label" />}
-                name="brand"
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.brand.label" />}
+              name="brand"
+            >
+              <Select
+                showSearch
+                placeholder="Select a person"
+                optionFilterProp="children"
+                onChange={onChangeSelect}
+                onSearch={onSearch}
+                defaultValue={location.state.brand}
+              // filterOption={(input, option) =>
+              //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              // }
               >
-                <Select
-                  showSearch
-                  placeholder="Select a person"
-                  optionFilterProp="children"
-                  onChange={onChangeSelect}
-                  onSearch={onSearch}
-                  defaultValue={location.state.brand}
-                // filterOption={(input, option) =>
-                //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                // }
-                >
-                  {selectedItems.map((elment, index) => (
-                    <Option value={elment.title}>{elment.title}</Option>
-                  ))}
-                </Select>
-              </FormItem>
-          ): null}
-          
+                {selectedItems.map((elment, index) => (
+                  <Option value={elment.title}>{elment.title}</Option>
+                ))}
+              </Select>
+            </FormItem>
+          ) : null}
+
 
           <FormItem
             {...formItemLayout}
@@ -425,28 +427,32 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               rows={4}
             />
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label={<FormattedMessage id="formandbasic-form.status.label" />}
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: formatMessage({ id: 'formandbasic-form.status.required' }),
-              },
-            ]}
-          >
-            <div>
-              <Radio.Group>
-                <Radio value="published">
-                  <FormattedMessage id="formandbasic-form.radio.publish" />
-                </Radio>
-                <Radio value="unpublished">
-                  <FormattedMessage id="formandbasic-form.radio.unpublish" />
-                </Radio>
-              </Radio.Group>
-            </div>
-          </FormItem>
+
+
+          {status || location.state.length == 0 ? (
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.status.label" />}
+              name="status"
+              rules={[
+                {
+                  required: true,
+                  message: formatMessage({ id: 'formandbasic-form.status.required' }),
+                },
+              ]}
+            >
+              <div>
+                <Radio.Group defaultValue={status}>
+                  <Radio value={"published"}>
+                    <FormattedMessage id="formandbasic-form.radio.publish" />
+                  </Radio>
+                  <Radio value={"unpublished"}>
+                    <FormattedMessage id="formandbasic-form.radio.unpublish" />
+                  </Radio>
+                </Radio.Group>
+              </div>
+            </FormItem>
+          ) : null}
 
           <FormItem
             {...formItemLayout}
