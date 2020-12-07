@@ -109,8 +109,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [value1, updateValue1] = useState<string>('');
   const [value2, updateValue2] = useState<string>('');
   const [value3, updateValue3] = useState<string>('');
+  const [values, updateValues] = useState([]);
   const [name, updateName] = useState<string>('');
   const [slug, getSlug] = useState<string>('');
+  const [flashSell, setFlashSell] = useState<string>('');
   const [status, getStatus] = useState<string>('');
   const [defaultCategory, setDefaultCategory] = useState([])
   const location = useLocation<object>()
@@ -120,25 +122,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   if (location.state == undefined) {
     location.state = []
-    // location.state.brand = ''
-    // location.state.brand.title = ''
   }
   const [productTermValues, setProductTermValue] = useState([])
-
-
-
-  // const [formVals, setFormVals] = useState<FormValueType>({
-  //   title: location.state.title,
-  //   categories: location.state.categories,
-  //   order: location.state.order,
-  //   description: location.state.description,
-  //   name: location.state.name,
-  //   images: location.state.images,
-  //   slug: location.state.slug,
-  //   price: location.state.price,
-  //   productAttributes: location.state.productTermValues,
-  //   quantity: location.state.quantity,
-  // })
 
 
 
@@ -148,7 +133,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 
   form.setFieldsValue({
     icon: value1,
-    images: value2,
+    images: values,
     banner: value3,
     slug: slug,
     productAttributes: productTermValues,
@@ -167,20 +152,26 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       location.state.category = [location.state.category.title]
       setDefaultCategory(location.state.category)
       console.log("location.state.category", location.state.category);
+
+      let images = []
+      location.state.images.forEach(element => {
+        images.push(element.url)
+      });
       
-      getStatus(location.state.status)
-      updateValue2(location.state.images[0].url)
+      
+      updateValues(values.concat(images)) 
       let val = await getTermValue({ id: location.state.category.id })
       val.map((element, index) => {
         element.productTermValue = location.state.productTermValues[index].termValue
       })
       setProductTermValue(val);
+      setFlashSell(location.state.flashSell)
       getSlug(location.state.slug)
+      getStatus(location.state.status)
     }
 
     let brands = await categoryQuery({ term: 'Brand' });
     setSelectedItems(brands)
-
   }
 
   const update = {
@@ -255,7 +246,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     handleModalVisible(e.modelSate);
     updateName(e.name);
     if (e.name == "icon") updateValue1(e.url);
-    else if (e.name == "images") updateValue2(e.url);
+    else if (e.name == "images") {
+      updateValue2(e.url);
+      updateValues(values.concat(e.url))
+    }
     else if (e.name == "banner") updateValue3(e.url);
   }
 
@@ -459,6 +453,31 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             </FormItem>
           ) : null}
 
+          {status || location.state.length == 0? ( 
+            <FormItem
+              {...formItemLayout}
+              label={<FormattedMessage id="formandbasic-form.flashSell.label" />}
+              name="flashSell"
+              rules={[
+                {
+                  required: true,
+                  message: formatMessage({ id: 'formandbasic-form.flashSell.required' }),
+                },
+              ]}
+            >
+              <div>
+                <Radio.Group defaultValue={flashSell}>
+                  <Radio value={"yes"}>
+                    <FormattedMessage id="formandbasic-form.radio.yes" />
+                  </Radio>
+                  <Radio value={"no"}>
+                    <FormattedMessage id="formandbasic-form.radio.no" />
+                  </Radio>
+                </Radio.Group>
+              </div>
+            </FormItem>
+          ) : null}
+
           <FormItem
             {...formItemLayout}
             name="images"
@@ -474,14 +493,16 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             <Button icon={<PictureOutlined />} onClick={() => modelreq("images")} >
               Selcet Image
             </Button>
-            {update.value2 ? (
+           
+            {values.map((elemnt, index) => (
               <Input
-                name="images"
-                prefix={<Image
-                  width={50}
-                  src={proSettings.baseUrl + "/media/image/" + update.value2}
-                />} disabled />
-            ) : null}
+              name="images"
+              prefix={<Image
+                width={50}
+                src={proSettings.baseUrl + "/media/image/" + values[index]}
+              />} disabled />
+            ))}
+              
           </FormItem>
 
           <Divider orientation="center">Product Attributes</Divider>

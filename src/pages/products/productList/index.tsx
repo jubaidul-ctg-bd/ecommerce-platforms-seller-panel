@@ -150,6 +150,15 @@ const TableList: React.FC<{}> = () => {
         unpublished: { text: 'Unpublished', status: 'Error' },
       },
     },
+    {
+      title: 'Flash Sell',
+      dataIndex: 'flashSell',
+      hideInForm: true,
+      valueEnum: {
+        yes: { text: 'YES', status: 'Success' },
+        no: { text: 'NO', status: 'Error' },
+      },
+    },
     // {
     //   title: 'Icon',
     //   dataIndex: 'icon',
@@ -164,10 +173,14 @@ const TableList: React.FC<{}> = () => {
       title: 'Image',
       dataIndex: 'images',
       renderText: (val: string) => (
-        <Image
-          width={40}
-          src={proSettings.baseUrl+"/media/image/"+val[0]['url']}
-        />
+        <>
+          {val.length ? (
+            <Image
+              width={40}
+              src={proSettings.baseUrl+"/media/image/"+val[0]['url']}
+            />
+          ): null}
+        </>
       ),
     },
     // {

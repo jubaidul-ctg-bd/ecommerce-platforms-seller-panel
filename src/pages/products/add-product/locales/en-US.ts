@@ -68,6 +68,13 @@ export default {
   'formandbasic-form.status.required' : 'Please Select Product Status',
   'formandbasic-form.status.label' : 'Status',
 
+
+  'formandbasic-form.radio.yes' : 'YES',
+  'formandbasic-form.radio.no' : 'NO',
+  'formandbasic-form.flashSell.required' : 'Please select flash sell option',
+  'formandbasic-form.flashSell.label' : 'Flash Sell',
+
+
   'formandbasic-form.brand.required' : 'Please Select Product Brand',
   'formandbasic-form.brand.label' : 'Brand',
 
