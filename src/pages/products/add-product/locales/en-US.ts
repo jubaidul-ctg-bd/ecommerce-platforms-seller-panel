@@ -61,6 +61,7 @@ export default {
   'formandbasic-form.option.C': 'Colleague C',
 
   'formandbasic-form.category.label': 'Category',
+  'formandbasic-form.category.required': 'Please Select Category',
   'formandbasic-form.order.label' : 'Category Order',
   'formandbasic-form.radio.publish' : 'Publish',
   'formandbasic-form.radio.unpublish' : 'Unpublish',

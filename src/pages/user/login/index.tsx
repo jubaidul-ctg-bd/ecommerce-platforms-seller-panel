@@ -148,7 +148,7 @@ const Register: FC<RegisterProps> = ({ submitting, dispatch, userAndregister }) 
       message.error(response)
     }
     else if (response.status === 'ok') {
-      message.success('login successful!');
+      message.success('login successful!' );
       // const urlParams = new URL(window.location.href);
       // const params = getPageQuery();
       // let { redirect } = params as { redirect: string };

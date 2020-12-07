@@ -118,6 +118,10 @@ const TableList: React.FC<{}> = () => {
     {
       title: 'Category',
       dataIndex: ['category', 'title'],
+    }, 
+    {
+      title: 'Brand',
+      dataIndex: ['brand', 'title'],
     },
     {
       title: 'Description',

@@ -65,7 +65,7 @@ const optionss = [
 // }
 
 // Just show the latest item.
-function displayRender(label) {
+function displayRender(label) {  
   return label[label.length - 1];
 }
 
@@ -112,6 +112,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [name, updateName] = useState<string>('');
   const [slug, getSlug] = useState<string>('');
   const [status, getStatus] = useState<string>('');
+  const [defaultCategory, setDefaultCategory] = useState([])
   const location = useLocation<object>()
   const [brand, setBrand] = useState<string>('');
   const [options, setOptions] = useState([])
@@ -163,11 +164,12 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     }
     else {
       location.state.brand = location.state.brand.title
-      location.state.category = [location.state.category.id]
+      location.state.category = [location.state.category.title]
+      setDefaultCategory(location.state.category)
+      console.log("location.state.category", location.state.category);
+      
       getStatus(location.state.status)
       updateValue2(location.state.images[0].url)
-      console.log("location.state.category", value2);
-
       let val = await getTermValue({ id: location.state.category.id })
       val.map((element, index) => {
         element.productTermValue = location.state.productTermValues[index].termValue
@@ -278,15 +280,17 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     value.productTermValue = selectedItems
   };
 
-
-
+  function filter(inputValue, path) {
+    return path.some(option => option.title.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
+  }
 
   return (
     <PageHeaderWrapper
     // content={<FormattedMessage id="formandbasic-form.basic.description" />}
     >
       <Card bordered={false}>
-        <Form
+        {defaultCategory.length || location.state.length == 0 ? (          
+          <Form
           hideRequiredMark
           style={{ marginTop: 8 }}
           form={form}
@@ -296,7 +300,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           onValuesChange={onValuesChange}
           initialValues={{
             title: location.state.title,
-            // categories: location.state.category,
+            categories: defaultCategory,
+            // categories: ['Elctronics'],
             //brand: location.state.brand,
             description: location.state.description,
             name: location.state.name,
@@ -305,7 +310,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             price: location.state.price,
             productAttributes: location.state.productTermValues,
             quantity: location.state.quantity,
-            // status: location.state.status,
+            status: location.state.status,
           }}
         >
 
@@ -343,11 +348,11 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               ]}
             >
               <Cascader
-                fieldNames={{ label: 'title', value: 'id', children: 'childTermValues' }}
+                fieldNames={{ label: 'title', value: 'title', children: 'childTermValues' }}
                 options={options}
                 expandTrigger="hover"
                 displayRender={displayRender}
-                // defaultValue={['zhejiang', 'hangzhou', 'xihu']}
+                showSearch={{ filter }}
                 onChange={onChangeCascader}
                 changeOnSelect={true}
               />
@@ -547,6 +552,9 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             </Button>
           </FormItem>
         </Form>
+                    
+         ): null}
+        
       </Card>
 
       <Modal
