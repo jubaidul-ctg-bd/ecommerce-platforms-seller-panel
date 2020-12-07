@@ -47,7 +47,7 @@ export async function queryCurrent(){
   let sellerInfo = await request('/seller/currentSeller');
   sellerInfo.userid = "00000001"
   if (sellerInfo.avatar) {
-    sellerInfo.avatar = proSettings.baseUrl+"/media/image/"+sellerInfo.avatar;
+    sellerInfo.avatar = proSettings.baseUrl+"/media/image/"+sellerInfo.avatar.url;
   } else {
     sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
   }

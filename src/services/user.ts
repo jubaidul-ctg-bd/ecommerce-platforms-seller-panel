@@ -25,7 +25,7 @@ export async function queryCurrent(): Promise<any> {
     if(!sellerInfo.avatar)
       sellerInfo.avatar = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
     else 
-      sellerInfo.avatar = proSettings.baseUrl+"/media/image/"+sellerInfo.avatar
+      sellerInfo.avatar = proSettings.baseUrl+"/media/image/"+sellerInfo.avatar.url
       return sellerInfo;
   }
   else 

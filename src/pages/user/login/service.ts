@@ -25,6 +25,8 @@ export async function AccountLogin(params: LoginParamsType) {
   if(auth.status==="ok")
   {
     localStorage.setItem("access_token", auth.access_token)
+    localStorage.setItem("antd-pro-authority", "admin")
+
     // proSettings.authToken = auth.access_token;
     return {
     status: 'ok',

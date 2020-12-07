@@ -345,7 +345,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 fieldNames={{ label: 'title', value: 'title', children: 'childTermValues' }}
                 options={options}
                 expandTrigger="hover"
-                displayRender={displayRender}
+                // displayRender={displayRender}
                 showSearch={{ filter }}
                 onChange={onChangeCascader}
                 changeOnSelect={true}
@@ -458,12 +458,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               {...formItemLayout}
               label={<FormattedMessage id="formandbasic-form.flashSell.label" />}
               name="flashSell"
-              rules={[
-                {
-                  required: true,
-                  message: formatMessage({ id: 'formandbasic-form.flashSell.required' }),
-                },
-              ]}
             >
               <div>
                 <Radio.Group defaultValue={flashSell}>
